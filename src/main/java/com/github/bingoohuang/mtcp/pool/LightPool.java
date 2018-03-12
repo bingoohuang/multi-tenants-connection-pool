@@ -64,8 +64,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     private static final String EVICTED_CONNECTION_MESSAGE = "(connection was evicted)";
     private static final String DEAD_CONNECTION_MESSAGE = "(connection is dead)";
 
-    private final PoolEntryCreator POOL_ENTRY_CREATOR = new PoolEntryCreator(null /*logging prefix*/);
-    private final PoolEntryCreator POST_FILL_POOL_ENTRY_CREATOR = new PoolEntryCreator("After adding ");
+    private final PoolEntryCreator POOL_ENTRY_CREATOR = new PoolEntryCreator();
+    private final PoolEntryCreator POST_POOL_ENTRY_CREATOR = new PostPoolEntryCreator("After adding ");
     private final Collection<Runnable> addConnectionQueue;
     private final ThreadPoolExecutor addConnectionExecutor;
     private final ThreadPoolExecutor closeConnectionExecutor;
@@ -425,8 +425,11 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         int a = config.getMaximumPoolSize() - getTotalConnections();
         int b = config.getMinimumIdle() - getIdleConnections();
         val connectionsToAdd = Math.min(a, b) - addConnectionQueue.size();
-        for (int i = 0; i < connectionsToAdd; i++) {
-            addConnectionExecutor.submit((i < connectionsToAdd - 1) ? POOL_ENTRY_CREATOR : POST_FILL_POOL_ENTRY_CREATOR);
+        for (int i = 0; i < connectionsToAdd - 1; i++) {
+            addConnectionExecutor.submit(POOL_ENTRY_CREATOR);
+        }
+        if (connectionsToAdd > 0) {
+            addConnectionExecutor.submit(POST_POOL_ENTRY_CREATOR);
         }
     }
 
@@ -603,13 +606,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     /**
      * Creating and adding poolEntries (connections) to the pool.
      */
-    private final class PoolEntryCreator implements Callable<Boolean> {
-        private final String loggingPrefix;
-
-        PoolEntryCreator(String loggingPrefix) {
-            this.loggingPrefix = loggingPrefix;
-        }
-
+    private class PoolEntryCreator implements Callable<Boolean> {
         @Override
         public Boolean call() {
             long sleepBackoff = 250L;
@@ -618,9 +615,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                 if (poolEntry != null) {
                     connectionBag.add(poolEntry);
                     log.debug("{} - Added connection {}", poolName, poolEntry.connection);
-                    if (loggingPrefix != null) {
-                        logPoolState(loggingPrefix);
-                    }
+                    postLogPoolState();
+
                     return Boolean.TRUE;
                 }
 
@@ -632,6 +628,10 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
             return Boolean.FALSE;
         }
 
+        protected void postLogPoolState() {
+
+        }
+
         /**
          * We only create connections if we need another idle connection or have threads still waiting
          * for a new connection.  Otherwise we bail out of the request to create.
@@ -641,6 +641,18 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         private boolean shouldCreateAnotherConnection() {
             return getTotalConnections() < config.getMaximumPoolSize() &&
                     (connectionBag.getWaitingThreadCount() > 0 || getIdleConnections() < config.getMinimumIdle());
+        }
+    }
+
+    private class PostPoolEntryCreator extends PoolEntryCreator {
+        private final String loggingPrefix;
+
+        PostPoolEntryCreator(String loggingPrefix) {
+            this.loggingPrefix = loggingPrefix;
+        }
+
+        protected void postLogPoolState() {
+            logPoolState(loggingPrefix);
         }
     }
 
