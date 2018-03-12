@@ -24,19 +24,19 @@ import java.util.concurrent.TimeUnit;
 
 class PrometheusMetricsTracker implements IMetricsTracker {
    private static final Counter CONNECTION_TIMEOUT_COUNTER = Counter.build()
-      .name("hikaricp_connection_timeout_total")
+      .name("lightcp_connection_timeout_total")
       .labelNames("pool")
       .help("Connection timeout total count")
       .register();
 
    private static final Summary ELAPSED_ACQUIRED_SUMMARY =
-      registerSummary("hikaricp_connection_acquired_nanos", "Connection acquired time (ns)");
+      registerSummary("lightcp_connection_acquired_nanos", "Connection acquired time (ns)");
 
    private static final Summary ELAPSED_BORROWED_SUMMARY =
-      registerSummary("hikaricp_connection_usage_millis", "Connection usage (ms)");
+      registerSummary("lightcp_connection_usage_millis", "Connection usage (ms)");
 
    private static final Summary ELAPSED_CREATION_SUMMARY =
-      registerSummary("hikaricp_connection_creation_millis", "Connection creation (ms)");
+      registerSummary("lightcp_connection_creation_millis", "Connection creation (ms)");
 
    private final Counter.Child connectionTimeoutCounterChild;
 

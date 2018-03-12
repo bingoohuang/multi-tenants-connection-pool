@@ -36,13 +36,13 @@ class LightCPCollector extends Collector {
    @Override
    public List<MetricFamilySamples> collect() {
       return Arrays.asList(
-         createGauge("hikaricp_active_connections", "Active connections",
+         createGauge("lightcp_active_connections", "Active connections",
             PoolStats::getActiveConnections),
-         createGauge("hikaricp_idle_connections", "Idle connections",
+         createGauge("lightcp_idle_connections", "Idle connections",
             PoolStats::getIdleConnections),
-         createGauge("hikaricp_pending_threads", "Pending threads",
+         createGauge("lightcp_pending_threads", "Pending threads",
             PoolStats::getPendingThreads),
-         createGauge("hikaricp_connections", "The number of current connections",
+         createGauge("lightcp_connections", "The number of current connections",
             PoolStats::getTotalConnections)
       );
    }

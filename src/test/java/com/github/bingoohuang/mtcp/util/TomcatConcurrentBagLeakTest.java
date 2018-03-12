@@ -73,7 +73,7 @@ public class TomcatConcurrentBagLeakTest {
       assertNotNull(ex);
    }
 
-   public static class PoolEntry implements ConcurrentBag.IConcurrentBagEntry {
+   public static class PoolEntry extends BagEntry {
       private int state;
 
       @Override

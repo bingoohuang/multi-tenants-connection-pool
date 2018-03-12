@@ -30,9 +30,9 @@ import static org.junit.Assert.*;
 public class TestValidation {
    @Test
    public void validateLoadProperties() {
-      System.setProperty("hikaricp.configurationFile", "/propfile1.properties");
+      System.setProperty("lightcp.configurationFile", "/propfile1.properties");
       LightConfig config = TestElf.newLightConfig();
-      System.clearProperty("hikaricp.configurationFile");
+      System.clearProperty("lightcp.configurationFile");
       assertEquals(5, config.getMinimumIdle());
    }
 

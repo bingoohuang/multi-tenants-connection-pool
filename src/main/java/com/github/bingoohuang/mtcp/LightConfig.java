@@ -113,7 +113,7 @@ public class LightConfig implements LightConfigMXBean {
       initializationFailTimeout = 1;
       isAutoCommit = true;
 
-      String systemProp = System.getProperty("hikaricp.configurationFile");
+      String systemProp = System.getProperty("lightcp.configurationFile");
       if (systemProp != null) {
          loadProperties(systemProp);
       }

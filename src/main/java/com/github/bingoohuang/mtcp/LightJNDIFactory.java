@@ -37,14 +37,14 @@ public class LightJNDIFactory implements ObjectFactory {
       // We only know how to deal with <code>javax.naming.Reference</code> that specify a class name of "javax.sql.DataSource"
       if (obj instanceof Reference && "javax.sql.DataSource".equals(((Reference) obj).getClassName())) {
          Reference ref = (Reference) obj;
-         Set<String> hikariPropSet = PropertyElf.getPropertyNames(LightConfig.class);
+         Set<String> lightPropSet = PropertyElf.getPropertyNames(LightConfig.class);
 
          Properties properties = new Properties();
          Enumeration<RefAddr> enumeration = ref.getAll();
          while (enumeration.hasMoreElements()) {
             RefAddr element = enumeration.nextElement();
             String type = element.getType();
-            if (type.startsWith("dataSource.") || hikariPropSet.contains(type)) {
+            if (type.startsWith("dataSource.") || lightPropSet.contains(type)) {
                properties.setProperty(type, element.getContent().toString());
             }
          }

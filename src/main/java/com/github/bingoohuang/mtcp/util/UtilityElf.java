@@ -16,6 +16,8 @@
 
 package com.github.bingoohuang.mtcp.util;
 
+import lombok.val;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -117,8 +119,8 @@ public final class UtilityElf {
          threadFactory = new DefaultThreadFactory(threadName, true);
       }
 
-      LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(queueSize);
-      ThreadPoolExecutor executor = new ThreadPoolExecutor(1 /*core*/, 1 /*max*/, 5 /*keepalive*/, SECONDS, queue, threadFactory, policy);
+      val queue = new LinkedBlockingQueue<Runnable>(queueSize);
+      val executor = new ThreadPoolExecutor(1 /*core*/, 1 /*max*/, 5 /*keepalive*/, SECONDS, queue, threadFactory, policy);
       executor.allowCoreThreadTimeOut(true);
       return executor;
    }
@@ -137,7 +139,7 @@ public final class UtilityElf {
          threadFactory = new DefaultThreadFactory(threadName, true);
       }
 
-      ThreadPoolExecutor executor = new ThreadPoolExecutor(1 /*core*/, 1 /*max*/, 5 /*keepalive*/, SECONDS, queue, threadFactory, policy);
+      val executor = new ThreadPoolExecutor(1 /*core*/, 1 /*max*/, 5 /*keepalive*/, SECONDS, queue, threadFactory, policy);
       executor.allowCoreThreadTimeOut(true);
       return executor;
    }
@@ -156,7 +158,7 @@ public final class UtilityElf {
       if (transactionIsolationName != null) {
          try {
             // use the english locale to avoid the infamous turkish locale bug
-            final String upperName = transactionIsolationName.toUpperCase(Locale.ENGLISH);
+            val upperName = transactionIsolationName.toUpperCase(Locale.ENGLISH);
             if (upperName.startsWith("TRANSACTION_")) {
                Field field = Connection.class.getField(upperName);
                return field.getInt(null);
@@ -182,7 +184,6 @@ public final class UtilityElf {
    }
 
    public static final class DefaultThreadFactory implements ThreadFactory {
-
       private final String threadName;
       private final boolean daemon;
 

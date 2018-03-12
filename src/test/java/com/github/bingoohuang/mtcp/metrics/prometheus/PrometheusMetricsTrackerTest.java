@@ -48,16 +48,16 @@ public class PrometheusMetricsTrackerTest {
       String[] labelNames = {POOL_LABEL_NAME};
       String[] labelValues = {config.getPoolName()};
 
-      try (LightDataSource hikariDataSource = new LightDataSource(config)) {
-         try (Connection connection1 = hikariDataSource.getConnection();
-              Connection connection2 = hikariDataSource.getConnection()) {
-            try (Connection connection3 = hikariDataSource.getConnection()) {
+      try (LightDataSource lightDataSource = new LightDataSource(config)) {
+         try (Connection connection1 = lightDataSource.getConnection();
+              Connection connection2 = lightDataSource.getConnection()) {
+            try (Connection connection3 = lightDataSource.getConnection()) {
             } catch (SQLTransientConnectionException ignored) {
             }
          }
 
          Double total = collectorRegistry.getSampleValue(
-            "hikaricp_connection_timeout_total",
+            "lightcp_connection_timeout_total",
             labelNames,
             labelValues
          );
@@ -67,17 +67,17 @@ public class PrometheusMetricsTrackerTest {
 
    @Test
    public void connectionAcquisitionMetrics() {
-      checkSummaryMetricFamily("hikaricp_connection_acquired_nanos");
+      checkSummaryMetricFamily("lightcp_connection_acquired_nanos");
    }
 
    @Test
    public void connectionUsageMetrics() {
-      checkSummaryMetricFamily("hikaricp_connection_usage_millis");
+      checkSummaryMetricFamily("lightcp_connection_usage_millis");
    }
 
    @Test
    public void connectionCreationMetrics() {
-      checkSummaryMetricFamily("hikaricp_connection_creation_millis");
+      checkSummaryMetricFamily("lightcp_connection_creation_millis");
    }
 
    @Test
@@ -94,7 +94,7 @@ public class PrometheusMetricsTrackerTest {
 
       try (LightDataSource ignored = new LightDataSource(config)) {
          assertThat(collectorRegistry.getSampleValue(
-            "hikaricp_connection_timeout_total",
+            "lightcp_connection_timeout_total",
             labelNames,
             labelValues1), is(0.0));
 
@@ -108,7 +108,7 @@ public class PrometheusMetricsTrackerTest {
 
          try (LightDataSource ignored2 = new LightDataSource(config2)) {
             assertThat(collectorRegistry.getSampleValue(
-               "hikaricp_connection_timeout_total",
+               "lightcp_connection_timeout_total",
                labelNames,
                labelValues2), is(0.0));
          }

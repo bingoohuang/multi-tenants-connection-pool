@@ -15,8 +15,8 @@
  */
 package com.github.bingoohuang.mtcp.pool;
 
+import com.github.bingoohuang.mtcp.util.BagEntry;
 import com.github.bingoohuang.mtcp.util.ClockSource;
-import com.github.bingoohuang.mtcp.util.ConcurrentBag;
 import com.github.bingoohuang.mtcp.util.FastList;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
  *
  * @author Brett Wooldridge
  */
-@Slf4j final class PoolEntry implements ConcurrentBag.IConcurrentBagEntry {
+@Slf4j final class PoolEntry extends BagEntry {
     private static final AtomicIntegerFieldUpdater<PoolEntry> stateUpdater
             = AtomicIntegerFieldUpdater.newUpdater(PoolEntry.class, "state");
 
@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
     private final boolean isReadOnly;
     private final boolean isAutoCommit;
 
-    PoolEntry(Connection connection, final PoolBase pool, final boolean isReadOnly, final boolean isAutoCommit) {
+    PoolEntry(Connection connection, PoolBase pool, boolean isReadOnly, boolean isAutoCommit) {
         this.connection = connection;
         this.lightPool = pool;
         this.isReadOnly = isReadOnly;
@@ -67,7 +67,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
      *
      * @param lastAccessed last access time-stamp
      */
-    void recycle(final long lastAccessed) {
+    void recycle(long lastAccessed) {
         if (connection != null) {
             this.lastAccessed = lastAccessed;
             lightPool.recycle(this);
@@ -83,7 +83,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
         this.endOfLife = endOfLife;
     }
 
-    Connection createProxyConnection(final ProxyLeakTask leakTask, final long now) {
+    Connection createProxyConnection(ProxyLeakTask leakTask, long now) {
         return ProxyFactory.getProxyConnection(this, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
     }
 
@@ -126,7 +126,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
     }
 
     // ***********************************************************************
-    //                      IConcurrentBagEntry methods
+    //                      BagEntry methods
     // ***********************************************************************
 
     /**
@@ -141,7 +141,7 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
      * {@inheritDoc}
      */
     @Override
-    public boolean compareAndSet(int expect, int update) {
+    protected boolean compareAndSet(int expect, int update) {
         return stateUpdater.compareAndSet(this, expect, update);
     }
 
@@ -163,20 +163,5 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
         connection = null;
         endOfLife = null;
         return con;
-    }
-
-    private String stateToString() {
-        switch (state) {
-            case STATE_USING:
-                return "USING";
-            case STATE_FREE:
-                return "FREE";
-            case STATE_REMOVED:
-                return "REMOVED";
-            case STATE_RESERVED:
-                return "RESERVED";
-            default:
-                return "Invalid";
-        }
     }
 }

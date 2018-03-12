@@ -11,15 +11,15 @@ import java.util.concurrent.TimeUnit;
 
 public class MicrometerMetricsTracker implements IMetricsTracker {
    private static final String METRIC_CATEGORY = "pool";
-   private static final String METRIC_NAME_WAIT = "hikaricp.connections.acquire";
-   private static final String METRIC_NAME_USAGE = "hikaricp.connections.usage";
-   private static final String METRIC_NAME_CONNECT = "hikaricp.connections.creation";
+   private static final String METRIC_NAME_WAIT = "lightcp.connections.acquire";
+   private static final String METRIC_NAME_USAGE = "lightcp.connections.usage";
+   private static final String METRIC_NAME_CONNECT = "lightcp.connections.creation";
 
-   private static final String METRIC_NAME_TIMEOUT_RATE = "hikaricp.connections.timeout";
-   private static final String METRIC_NAME_TOTAL_CONNECTIONS = "hikaricp.connections";
-   private static final String METRIC_NAME_IDLE_CONNECTIONS = "hikaricp.connections.idle";
-   private static final String METRIC_NAME_ACTIVE_CONNECTIONS = "hikaricp.connections.active";
-   private static final String METRIC_NAME_PENDING_CONNECTIONS = "hikaricp.connections.pending";
+   private static final String METRIC_NAME_TIMEOUT_RATE = "lightcp.connections.timeout";
+   private static final String METRIC_NAME_TOTAL_CONNECTIONS = "lightcp.connections";
+   private static final String METRIC_NAME_IDLE_CONNECTIONS = "lightcp.connections.idle";
+   private static final String METRIC_NAME_ACTIVE_CONNECTIONS = "lightcp.connections.active";
+   private static final String METRIC_NAME_PENDING_CONNECTIONS = "lightcp.connections.pending";
 
    private final Timer connectionObtainTimer;
    private final Counter connectionTimeoutCounter;

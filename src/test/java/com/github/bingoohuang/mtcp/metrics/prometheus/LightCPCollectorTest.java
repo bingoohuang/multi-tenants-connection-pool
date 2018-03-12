@@ -39,10 +39,10 @@ public class LightCPCollectorTest {
 
       StubConnection.slowCreate = true;
       try (LightDataSource ds = new LightDataSource(config)) {
-         assertThat(getValue("hikaricp_active_connections", "noConnection"), is(0.0));
-         assertThat(getValue("hikaricp_idle_connections", "noConnection"), is(0.0));
-         assertThat(getValue("hikaricp_pending_threads", "noConnection"), is(0.0));
-         assertThat(getValue("hikaricp_connections", "noConnection"), is(0.0));
+         assertThat(getValue("lightcp_active_connections", "noConnection"), is(0.0));
+         assertThat(getValue("lightcp_idle_connections", "noConnection"), is(0.0));
+         assertThat(getValue("lightcp_pending_threads", "noConnection"), is(0.0));
+         assertThat(getValue("lightcp_connections", "noConnection"), is(0.0));
       } finally {
          StubConnection.slowCreate = false;
       }
@@ -58,10 +58,10 @@ public class LightCPCollectorTest {
       StubConnection.slowCreate = true;
       try (LightDataSource ds = new LightDataSource(config)) {
          String poolName = ds.getLightConfigMXBean().getPoolName();
-         assertThat(getValue("hikaricp_active_connections", poolName), is(0.0));
-         assertThat(getValue("hikaricp_idle_connections", poolName), is(0.0));
-         assertThat(getValue("hikaricp_pending_threads", poolName), is(0.0));
-         assertThat(getValue("hikaricp_connections", poolName), is(0.0));
+         assertThat(getValue("lightcp_active_connections", poolName), is(0.0));
+         assertThat(getValue("lightcp_idle_connections", poolName), is(0.0));
+         assertThat(getValue("lightcp_pending_threads", poolName), is(0.0));
+         assertThat(getValue("lightcp_connections", poolName), is(0.0));
       } finally {
          StubConnection.slowCreate = false;
       }
@@ -80,10 +80,10 @@ public class LightCPCollectorTest {
 
          UtilityElf.quietlySleep(1000);
 
-         assertThat(getValue("hikaricp_active_connections", "connection1"), is(1.0));
-         assertThat(getValue("hikaricp_idle_connections", "connection1"), is(0.0));
-         assertThat(getValue("hikaricp_pending_threads", "connection1"), is(0.0));
-         assertThat(getValue("hikaricp_connections", "connection1"), is(1.0));
+         assertThat(getValue("lightcp_active_connections", "connection1"), is(1.0));
+         assertThat(getValue("lightcp_idle_connections", "connection1"), is(0.0));
+         assertThat(getValue("lightcp_pending_threads", "connection1"), is(0.0));
+         assertThat(getValue("lightcp_connections", "connection1"), is(1.0));
       } finally {
          StubConnection.slowCreate = false;
       }
@@ -102,10 +102,10 @@ public class LightCPCollectorTest {
             // close immediately
          }
 
-         assertThat(getValue("hikaricp_active_connections", "connectionClosed"), is(0.0));
-         assertThat(getValue("hikaricp_idle_connections", "connectionClosed"), is(1.0));
-         assertThat(getValue("hikaricp_pending_threads", "connectionClosed"), is(0.0));
-         assertThat(getValue("hikaricp_connections", "connectionClosed"), is(1.0));
+         assertThat(getValue("lightcp_active_connections", "connectionClosed"), is(0.0));
+         assertThat(getValue("lightcp_idle_connections", "connectionClosed"), is(1.0));
+         assertThat(getValue("lightcp_pending_threads", "connectionClosed"), is(0.0));
+         assertThat(getValue("lightcp_connections", "connectionClosed"), is(1.0));
       } finally {
          StubConnection.slowCreate = false;
       }
