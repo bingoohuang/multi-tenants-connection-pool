@@ -105,7 +105,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
       registerMBeans(this);
 
-      ThreadFactory threadFactory = config.getThreadFactory();
+      val threadFactory = config.getThreadFactory();
 
       final LinkedBlockingQueue<Runnable> addConnectionQueue = new LinkedBlockingQueue<>(config.getMaximumPoolSize());
       this.addConnectionQueue = unmodifiableCollection(addConnectionQueue);
@@ -396,6 +396,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     * @param poolEntry     poolEntry having the connection to close
     * @param closureReason reason to close
     */
+   @Override
    void closeConnection(final PoolEntry poolEntry, final String closureReason) {
       if (connectionBag.remove(poolEntry)) {
          val connection = poolEntry.close();

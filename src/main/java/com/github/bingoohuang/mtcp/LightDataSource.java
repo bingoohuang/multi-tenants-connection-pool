@@ -70,9 +70,10 @@ public class LightDataSource extends LightConfig implements DataSource, Closeabl
       configuration.validate();
       configuration.copyStateTo(this);
 
-      log.info("{} - Starting...", configuration.getPoolName());
+      val poolName = configuration.getPoolName();
+      log.info("{} - Starting...", poolName);
       pool = fastPathPool = new LightPool(this);
-      log.info("{} - Started.", configuration.getPoolName());
+      log.info("{} - Started.", poolName);
 
       this.seal();
    }
@@ -101,23 +102,30 @@ public class LightDataSource extends LightConfig implements DataSource, Closeabl
             result = pool;
             if (result == null) {
                validate();
-               log.info("{} - Starting...", getPoolName());
-               try {
-                  pool = result = new LightPool(this);
-                  this.seal();
-               } catch (LightPool.PoolInitializationException pie) {
-                  if (pie.getCause() instanceof SQLException) {
-                     throw (SQLException) pie.getCause();
-                  } else {
-                     throw pie;
-                  }
-               }
-               log.info("{} - Started.", getPoolName());
+               result = startPool();
             }
          }
       }
 
       return result.getConnection();
+   }
+
+   private LightPool startPool() throws SQLException {
+      LightPool result;
+      val poolName = getPoolName();
+      log.info("{} - Starting...", poolName);
+      try {
+         pool = result = new LightPool(this);
+         this.seal();
+      } catch (LightPool.PoolInitializationException pie) {
+         if (pie.getCause() instanceof SQLException) {
+            throw (SQLException) pie.getCause();
+         } else {
+            throw pie;
+         }
+      }
+      log.info("{} - Started.", poolName);
+      return result;
    }
 
    /**
@@ -370,12 +378,13 @@ public class LightDataSource extends LightConfig implements DataSource, Closeabl
 
       LightPool p = pool;
       if (p != null) {
+         val poolName = getPoolName();
          try {
-            log.info("{} - Shutting down...", getPoolName());
+            log.info("{} - Shutting down...", poolName);
             p.shutdown();
-            log.info("{} - Stopped.", getPoolName());
+            log.info("{} - Stopped.", poolName);
          } catch (InterruptedException e) {
-            log.warn("{} - Interrupted during closing", getPoolName(), e);
+            log.warn("{} - Interrupted during closing", poolName, e);
             Thread.currentThread().interrupt();
          }
       }
