@@ -58,12 +58,13 @@ public class ThreadLocalList<T extends BagEntry> {
         threadList.get().add(holderFactory.createHolder(bagEntry));
     }
 
-    public T get() {
+    public T get(String tenantCode) {
         val list = threadList.get();
         for (int i = list.size() - 1; i >= 0; i--) {
             val entry = list.remove(i);
             val bagEntry = entry.get();
             if (bagEntry != null && bagEntry.stateFreeToUsing()) {
+                bagEntry.setTenantCode(tenantCode);
                 return bagEntry;
             }
         }

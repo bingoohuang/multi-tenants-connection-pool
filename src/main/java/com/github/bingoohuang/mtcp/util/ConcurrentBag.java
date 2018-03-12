@@ -15,6 +15,8 @@
  */
 package com.github.bingoohuang.mtcp.util;
 
+import com.github.bingoohuang.mtcp.TenantCodeAware;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -23,7 +25,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.github.bingoohuang.mtcp.util.ClockSource.currentTime;
@@ -58,7 +59,8 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
 
     private final ThreadLocalList<T> threadLocalList;
     private final BagStateListener listener;
-    private final AtomicInteger waiters;
+    @Getter private final BagWaiter bagWaiter;
+
     private volatile boolean closed;
 
     private final SynchronousQueue<T> handoffQueue;
@@ -73,10 +75,14 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
      * @param listener the BagStateListener to attach to this bag
      */
     public ConcurrentBag(final BagStateListener listener) {
+        this(listener, null);
+    }
+
+    public ConcurrentBag(final BagStateListener listener, TenantCodeAware tenantCodeAware) {
         this.listener = listener;
 
         this.handoffQueue = new SynchronousQueue<>(true);
-        this.waiters = new AtomicInteger();
+        this.bagWaiter = new BagWaiter(tenantCodeAware);
         this.sharedList = new CopyOnWriteArrayList<>();
         this.threadLocalList = new ThreadLocalList<>();
     }
@@ -92,31 +98,39 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
      */
     public T borrow(long timeout, final TimeUnit timeUnit) throws InterruptedException {
         // Try the thread-local list first
-        val entry = threadLocalList.get();
+        val tenantCode = bagWaiter.getTenantCode();
+        val entry = threadLocalList.get(tenantCode);
         if (entry != null) {
             return entry;
         }
 
         // Otherwise, scan the shared list ... then poll the handoff queue
-        val waiting = waiters.incrementAndGet();
+        val bagWaiting = bagWaiter.increaseWaiting(tenantCode);
         try {
             for (val bagEntry : sharedList) {
                 if (bagEntry.stateFreeToUsing()) {
                     // If we may have stolen another waiter's connection, request another bag add.
-                    if (waiting > 1) {
-                        listener.addBagItem(waiting - 1);
+                    if (bagWaiting.getWaiting() > 1) {
+                        listener.addBagItem(bagWaiting.getWaiting() - 1);
                     }
+
+                    bagEntry.setTenantCode(bagWaiter.getWaitingTenantCode());
                     return bagEntry;
                 }
             }
 
-            listener.addBagItem(waiting);
+            listener.addBagItem(bagWaiting.getWaiting());
 
             timeout = timeUnit.toNanos(timeout);
             do {
                 val start = currentTime();
                 val bagEntry = handoffQueue.poll(timeout, NANOSECONDS);
-                if (bagEntry == null || bagEntry.stateFreeToUsing()) {
+                if (bagEntry == null) {
+                    return bagEntry;
+                }
+
+                if (bagEntry.stateFreeToUsing()) {
+                    bagEntry.setTenantCode(bagWaiter.getWaitingTenantCode());
                     return bagEntry;
                 }
 
@@ -125,7 +139,8 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
 
             return null;
         } finally {
-            waiters.decrementAndGet();
+            bagWaiter.decrementWaiting(bagWaiting);
+
         }
     }
 
@@ -141,7 +156,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
     public void requite(final T bagEntry) {
         bagEntry.stateToFree();
 
-        for (int i = 0; waiters.get() > 0; i++) {
+        for (int i = 0; bagWaiter.hasWaiters(); i++) {
             if (!bagEntry.isStateFree() || handoffQueue.offer(bagEntry)) {
                 return;
             } else if ((i & 0xff) == 0xff) {
@@ -168,7 +183,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
         sharedList.add(bagEntry);
 
         // spin until a thread takes it or none are waiting
-        while (waiters.get() > 0 && !handoffQueue.offer(bagEntry)) {
+        while (bagWaiter.hasWaiters() && !handoffQueue.offer(bagEntry)) {
             yield();
         }
     }
@@ -269,7 +284,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
     public void unreserve(final T bagEntry) {
         if (bagEntry.stateReservedToFree()) {
             // spin until a thread takes it or none are waiting
-            while (waiters.get() > 0 && !handoffQueue.offer(bagEntry)) {
+            while (bagWaiter.hasWaiters() && !handoffQueue.offer(bagEntry)) {
                 yield();
             }
         } else {
@@ -284,7 +299,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
      * @return the number of threads waiting for items from the bag
      */
     public int getWaitingThreadCount() {
-        return waiters.get();
+        return bagWaiter.getWaiterCount();
     }
 
 
@@ -331,7 +346,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
             ++states[e.getState()];
         }
         states[4] = sharedList.size();
-        states[5] = waiters.get();
+        states[5] = bagWaiter.getWaiterCount();
 
         return states;
     }

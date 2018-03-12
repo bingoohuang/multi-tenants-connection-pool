@@ -27,7 +27,7 @@ import java.util.Properties;
 public final class DriverDataSource implements DataSource {
     private final String jdbcUrl;
     private final Properties driverProperties;
-    private Driver driver;
+    private final Driver driver;
 
     public DriverDataSource(String jdbcUrl, String driverClassName, Properties properties, String username, String password) {
         this.jdbcUrl = jdbcUrl;
@@ -44,58 +44,7 @@ public final class DriverDataSource implements DataSource {
             driverProperties.put("password", driverProperties.getProperty("password", password));
         }
 
-        if (driverClassName != null) {
-            val drivers = DriverManager.getDrivers();
-            while (drivers.hasMoreElements()) {
-                val d = drivers.nextElement();
-                if (d.getClass().getName().equals(driverClassName)) {
-                    driver = d;
-                    break;
-                }
-            }
-
-            if (driver == null) {
-                log.warn("Registered driver with driverClassName={} was not found, trying direct instantiation.", driverClassName);
-                Class<?> driverClass = null;
-                val threadContextClassLoader = Thread.currentThread().getContextClassLoader();
-                try {
-                    if (threadContextClassLoader != null) {
-                        try {
-                            driverClass = threadContextClassLoader.loadClass(driverClassName);
-                            log.debug("Driver class {} found in Thread context class loader {}", driverClassName, threadContextClassLoader);
-                        } catch (ClassNotFoundException e) {
-                            log.debug("Driver class {} not found in Thread context class loader {}, trying classloader {}",
-                                    driverClassName, threadContextClassLoader, this.getClass().getClassLoader());
-                        }
-                    }
-
-                    if (driverClass == null) {
-                        driverClass = this.getClass().getClassLoader().loadClass(driverClassName);
-                        log.debug("Driver class {} found in the LightConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-                    }
-                } catch (ClassNotFoundException e) {
-                    log.debug("Failed to load driver class {} from LightConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-                }
-
-                if (driverClass != null) {
-                    try {
-                        driver = (Driver) driverClass.newInstance();
-                    } catch (Exception e) {
-                        log.warn("Failed to create instance of driver class {}, trying jdbcUrl resolution", driverClassName, e);
-                    }
-                }
-            }
-        }
-
-        try {
-            if (driver == null) {
-                driver = DriverManager.getDriver(jdbcUrl);
-            } else if (!driver.acceptsURL(jdbcUrl)) {
-                throw new RuntimeException("Driver " + driverClassName + " claims to not accept jdbcUrl, " + jdbcUrl);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to get driver instance for jdbcUrl=" + jdbcUrl, e);
-        }
+        this.driver = DriverElf.createDriver(jdbcUrl, driverClassName);
     }
 
     @Override

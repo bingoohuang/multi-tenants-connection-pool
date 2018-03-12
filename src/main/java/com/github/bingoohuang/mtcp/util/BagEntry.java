@@ -1,5 +1,7 @@
 package com.github.bingoohuang.mtcp.util;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -8,6 +10,11 @@ public class BagEntry {
     private static final AtomicIntegerFieldUpdater<BagEntry> stateUpdater
             = AtomicIntegerFieldUpdater.newUpdater(BagEntry.class, "state");
     private volatile int state;
+
+    @Getter @Setter private volatile String tenantCode;
+
+    public BagEntry() {
+    }
 
     private interface State {
         int STATE_FREE = 0;
@@ -46,6 +53,7 @@ public class BagEntry {
 
     public final void stateToFree() {
         setState(State.STATE_FREE);
+        setTenantCode(null);
     }
 
     public final boolean isStateFree() {

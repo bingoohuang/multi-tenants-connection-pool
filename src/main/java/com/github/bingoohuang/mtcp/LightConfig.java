@@ -41,6 +41,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.github.bingoohuang.mtcp.util.DriverElf.loadDriverClass;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -67,6 +68,7 @@ public class LightConfig implements LightConfigMXBean {
     private volatile int minIdle;
     private volatile String username;
     private volatile String password;
+    private TenantCodeAware tenantCodeAware;
 
     // Properties NOT changeable at runtime
     //
@@ -166,6 +168,14 @@ public class LightConfig implements LightConfigMXBean {
         } else {
             this.connectionTimeout = connectionTimeoutMs;
         }
+    }
+
+    public void setTenantCodeAware(TenantCodeAware tenantCodeAware) {
+        this.tenantCodeAware = tenantCodeAware;
+    }
+
+    public TenantCodeAware getTenantCodeAware() {
+        return this.tenantCodeAware;
     }
 
     /**
@@ -481,27 +491,7 @@ public class LightConfig implements LightConfigMXBean {
         if (sealed)
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
-        Class<?> driverClass = null;
-        ClassLoader threadContextClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            if (threadContextClassLoader != null) {
-                try {
-                    driverClass = threadContextClassLoader.loadClass(driverClassName);
-                    log.debug("Driver class {} found in Thread context class loader {}", driverClassName, threadContextClassLoader);
-                } catch (ClassNotFoundException e) {
-                    log.debug("Driver class {} not found in Thread context class loader {}, trying classloader {}",
-                            driverClassName, threadContextClassLoader, this.getClass().getClassLoader());
-                }
-            }
-
-            if (driverClass == null) {
-                driverClass = this.getClass().getClassLoader().loadClass(driverClassName);
-                log.debug("Driver class {} found in the LightConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-            }
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver class {} from LightConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-        }
-
+        Class<?> driverClass = loadDriverClass(driverClassName, true);
         if (driverClass == null) {
             throw new RuntimeException("Failed to load driver class " + driverClassName + " in either of LightConfig class loader or Thread context classloader");
         }

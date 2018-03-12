@@ -79,7 +79,8 @@ import java.util.concurrent.ScheduledFuture;
     }
 
     Connection createProxyConnection(ProxyLeakTask leakTask, long now) {
-        return ProxyFactory.getProxyConnection(this, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
+        val proxyConnection = ProxyFactory.getProxyConnection(this, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
+        return proxyConnection;
     }
 
     void resetConnectionState(final ProxyConnection proxyConnection, final int dirtyBits) throws SQLException {

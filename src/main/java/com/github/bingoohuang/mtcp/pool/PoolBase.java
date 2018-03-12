@@ -176,7 +176,6 @@ abstract class PoolBase {
     // ***********************************************************************
     //                         PoolEntry methods
     // ***********************************************************************
-
     PoolEntry newPoolEntry() throws Exception {
         return new PoolEntry(newConnection(), this, isReadOnly, isAutoCommit);
     }

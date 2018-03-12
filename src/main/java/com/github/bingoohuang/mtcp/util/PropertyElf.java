@@ -40,10 +40,11 @@ public final class PropertyElf {
 
         List<Method> methods = Arrays.asList(target.getClass().getMethods());
         properties.forEach((key, value) -> {
-            if (target instanceof LightConfig && key.toString().startsWith("dataSource.")) {
-                ((LightConfig) target).addDataSourceProperty(key.toString().substring("dataSource.".length()), value);
+            String keyString = key.toString();
+            if (target instanceof LightConfig && keyString.startsWith("dataSource.")) {
+                ((LightConfig) target).addDataSourceProperty(keyString.substring("dataSource.".length()), value);
             } else {
-                setProperty(target, key.toString(), value, methods);
+                setProperty(target, keyString, value, methods);
             }
         });
     }

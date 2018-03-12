@@ -26,6 +26,7 @@ import com.github.bingoohuang.mtcp.metrics.PoolStats;
 import com.github.bingoohuang.mtcp.metrics.dropwizard.CodahaleHealthChecker;
 import com.github.bingoohuang.mtcp.metrics.dropwizard.CodahaleMetricsTrackerFactory;
 import com.github.bingoohuang.mtcp.metrics.micrometer.MicrometerMetricsTrackerFactory;
+import com.github.bingoohuang.mtcp.util.BagWaiter;
 import com.github.bingoohuang.mtcp.util.ClockSource;
 import com.github.bingoohuang.mtcp.util.ConcurrentBag;
 import com.github.bingoohuang.mtcp.util.UtilityElf;
@@ -38,6 +39,7 @@ import java.sql.SQLException;
 import java.sql.SQLTransientConnectionException;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.*;
 
 import static com.github.bingoohuang.mtcp.util.UtilityElf.createThreadPoolExecutor;
@@ -85,11 +87,11 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     public LightPool(final LightConfig config) {
         super(config);
 
-        this.connectionBag = new ConcurrentBag<>(this);
+        this.connectionBag = new ConcurrentBag<>(this, config.getTenantCodeAware());
 
         this.houseKeepingExecutorService = initializeHouseKeepingExecutorService();
 
-        checkFailFast();
+        checkFailFast(config);
 
         if (config.getMetricsTrackerFactory() != null) {
             setMetricsTrackerFactory(config.getMetricsTrackerFactory());
@@ -454,11 +456,16 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     /**
      * If initializationFailFast is configured, check that we have DB connectivity.
      *
+     * @param config
      * @throws PoolInitializationException if fails to create or validate connection
      * @see LightConfig#setInitializationFailTimeout(long)
      */
-    private void checkFailFast() {
-        val initializationTimeout = config.getInitializationFailTimeout();
+    private void checkFailFast(LightConfig config) {
+        if (config.getTenantCodeAware() != null) {
+            return; // ignore when multi-tenants environment is setup
+        }
+
+        val initializationTimeout = this.config.getInitializationFailTimeout();
         if (initializationTimeout < 0) {
             return;
         }
@@ -467,7 +474,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         do {
             val poolEntry = createPoolEntry();
             if (poolEntry != null) {
-                if (config.getMinimumIdle() > 0) {
+                if (this.config.getMinimumIdle() > 0) {
                     connectionBag.add(poolEntry);
                     log.debug("{} - Added connection {}", poolName, poolEntry.connection);
                 } else {
@@ -610,6 +617,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         @Override
         public Boolean call() {
             long sleepBackoff = 250L;
+            BagWaiter bagWaiter = connectionBag.getBagWaiter();
             while (poolState == POOL_NORMAL && shouldCreateAnotherConnection()) {
                 val poolEntry = createPoolEntry();
                 if (poolEntry != null) {

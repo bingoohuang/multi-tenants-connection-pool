@@ -18,6 +18,7 @@ package com.github.bingoohuang.mtcp.util;
 
 import com.github.bingoohuang.mtcp.pool.TestElf;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -81,7 +82,7 @@ public class TomcatConcurrentBagLeakTest {
 
         @SuppressWarnings({"unused", "ResultOfMethodCallIgnored"})
         public void createConcurrentBag() throws InterruptedException {
-            try (ConcurrentBag<BagEntry> bag = new ConcurrentBag<>((x) -> CompletableFuture.completedFuture(Boolean.TRUE))) {
+            try (val bag = new ConcurrentBag<>((x) -> CompletableFuture.completedFuture(Boolean.TRUE))) {
 
                 BagEntry entry = new BagEntry();
                 bag.add(entry);
