@@ -27,26 +27,26 @@ import java.util.concurrent.ScheduledExecutorService;
  * @author Andreas Brenk
  */
 class ProxyLeakTaskFactory {
-   private final ScheduledExecutorService executorService;
-   private long leakDetectionThreshold;
+    private final ScheduledExecutorService executorService;
+    private long leakDetectionThreshold;
 
-   ProxyLeakTaskFactory(final long leakDetectionThreshold, final ScheduledExecutorService executorService) {
-      this.executorService = executorService;
-      this.leakDetectionThreshold = leakDetectionThreshold;
-   }
+    ProxyLeakTaskFactory(final long leakDetectionThreshold, final ScheduledExecutorService executorService) {
+        this.executorService = executorService;
+        this.leakDetectionThreshold = leakDetectionThreshold;
+    }
 
-   ProxyLeakTask schedule(final PoolEntry poolEntry) {
-      return (leakDetectionThreshold == 0) ? ProxyLeakTask.NO_LEAK : scheduleNewTask(poolEntry);
-   }
+    ProxyLeakTask schedule(final PoolEntry poolEntry) {
+        return (leakDetectionThreshold == 0) ? ProxyLeakTask.NO_LEAK : scheduleNewTask(poolEntry);
+    }
 
-   void updateLeakDetectionThreshold(final long leakDetectionThreshold) {
-      this.leakDetectionThreshold = leakDetectionThreshold;
-   }
+    void updateLeakDetectionThreshold(final long leakDetectionThreshold) {
+        this.leakDetectionThreshold = leakDetectionThreshold;
+    }
 
-   private ProxyLeakTask scheduleNewTask(PoolEntry poolEntry) {
-      val task = new ProxyLeakTask(poolEntry);
-      task.schedule(executorService, leakDetectionThreshold);
+    private ProxyLeakTask scheduleNewTask(PoolEntry poolEntry) {
+        val task = new ProxyLeakTask(poolEntry);
+        task.schedule(executorService, leakDetectionThreshold);
 
-      return task;
-   }
+        return task;
+    }
 }

@@ -19,20 +19,20 @@ package com.github.bingoohuang.mtcp.metrics;
 /**
  * @author Brett Wooldridge
  */
-public interface IMetricsTracker extends AutoCloseable {
-   default void recordConnectionCreatedMillis(long connectionCreatedMillis) {
-   }
+public interface MetricsTracker extends AutoCloseable {
+    default void recordConnectionCreatedMillis(long connectionCreatedMillis) {
+    }
 
-   default void recordConnectionAcquiredNanos(final long elapsedAcquiredNanos) {
-   }
+    default void recordConnectionAcquiredNanos(final long elapsedAcquiredNanos) {
+    }
 
-   default void recordConnectionUsageMillis(final long elapsedBorrowedMillis) {
-   }
+    default void recordConnectionUsageMillis(final long elapsedBorrowedMillis) {
+    }
 
-   default void recordConnectionTimeout() {
-   }
+    default void recordConnectionTimeout() {
+    }
 
-   @Override
-   default void close() {
-   }
+    @Override
+    default void close() {
+    }
 }

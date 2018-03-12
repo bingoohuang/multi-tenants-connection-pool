@@ -22,17 +22,13 @@ package com.github.bingoohuang.mtcp;
  * @author Brett Wooldridge
  */
 public interface LightPoolMXBean {
-   int getIdleConnections();
+    int getIdleConnections();
 
-   int getActiveConnections();
+    int getActiveConnections();
 
-   int getTotalConnections();
+    int getTotalConnections();
 
-   int getThreadsAwaitingConnection();
+    int getThreadsAwaitingConnection();
 
-   void softEvictConnections();
-
-   void suspendPool();
-
-   void resumePool();
+    void softEvictConnections();
 }

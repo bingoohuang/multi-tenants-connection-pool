@@ -17,7 +17,6 @@
 package com.github.bingoohuang.mtcp.pool;
 
 import com.github.bingoohuang.mtcp.LightConfig;
-import com.github.bingoohuang.mtcp.metrics.IMetricsTracker;
 import com.github.bingoohuang.mtcp.util.ClockSource;
 import com.github.bingoohuang.mtcp.util.DriverDataSource;
 import com.github.bingoohuang.mtcp.util.PropertyElf;
@@ -34,6 +33,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTransientConnectionException;
 import java.sql.Statement;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -47,7 +47,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Slf4j
 abstract class PoolBase {
     public final LightConfig config;
-    public IMetricsTrackerDelegate metricsTracker;
+    public MetricsTrackerDelegatable metricsTracker;
     protected final String poolName;
     long connectionTimeout;
     long validationTimeout;
@@ -301,6 +301,16 @@ abstract class PoolBase {
         val dataSourceJNDI = config.getDataSourceJNDI();
         val dataSourceProperties = config.getDataSourceProperties();
 
+        val dataSource = createDataSource(jdbcUrl, username, password, dsClassName, driverClassName, dataSourceJNDI, dataSourceProperties);
+        if (dataSource != null) {
+            setLoginTimeout(dataSource);
+            createNetworkTimeoutExecutor(dataSource, dsClassName, jdbcUrl);
+        }
+
+        this.dataSource = dataSource;
+    }
+
+    private DataSource createDataSource(String jdbcUrl, String username, String password, String dsClassName, String driverClassName, String dataSourceJNDI, Properties dataSourceProperties) {
         DataSource dataSource = config.getDataSource();
         if (dsClassName != null && dataSource == null) {
             dataSource = UtilityElf.createInstance(dsClassName, DataSource.class);
@@ -309,19 +319,13 @@ abstract class PoolBase {
             dataSource = new DriverDataSource(jdbcUrl, driverClassName, dataSourceProperties, username, password);
         } else if (dataSourceJNDI != null && dataSource == null) {
             try {
-                InitialContext ic = new InitialContext();
+                val ic = new InitialContext();
                 dataSource = (DataSource) ic.lookup(dataSourceJNDI);
             } catch (NamingException e) {
-                throw new LightPool.PoolInitializationException(e);
+                throw new PoolInitializationException(e);
             }
         }
-
-        if (dataSource != null) {
-            setLoginTimeout(dataSource);
-            createNetworkTimeoutExecutor(dataSource, dsClassName, jdbcUrl);
-        }
-
-        this.dataSource = dataSource;
+        return dataSource;
     }
 
     /**
@@ -577,108 +581,5 @@ abstract class PoolBase {
 
         sb.setLength(sb.length() - 2);  // trim trailing comma
         return sb.toString();
-    }
-
-    // ***********************************************************************
-    //                      Private Static Classes
-    // ***********************************************************************
-
-    static class ConnectionSetupException extends Exception {
-        private static final long serialVersionUID = 929872118275916521L;
-
-        ConnectionSetupException(Throwable t) {
-            super(t);
-        }
-    }
-
-    /**
-     * Special executor used only to work around a MySQL issue that has not been addressed.
-     * MySQL issue: http://bugs.mysql.com/bug.php?id=75615
-     */
-    private static class SynchronousExecutor implements Executor {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void execute(Runnable command) {
-            try {
-                command.run();
-            } catch (Throwable t) {
-                log.debug("Failed to execute: {}", command, t);
-            }
-        }
-    }
-
-    interface IMetricsTrackerDelegate extends AutoCloseable {
-        default void recordConnectionUsage(PoolEntry poolEntry) {
-        }
-
-        default void recordConnectionCreated(long connectionCreatedMillis) {
-        }
-
-        default void recordBorrowTimeoutStats(long startTime) {
-        }
-
-        default void recordBorrowStats(final PoolEntry poolEntry, final long startTime) {
-        }
-
-        default void recordConnectionTimeout() {
-        }
-
-        @Override
-        default void close() {
-        }
-    }
-
-    /**
-     * A class that delegates to a MetricsTracker implementation.  The use of a delegate
-     * allows us to use the NopMetricsTrackerDelegate when metrics are disabled, which in
-     * turn allows the JIT to completely optimize away to callsites to record metrics.
-     */
-    static class MetricsTrackerDelegate implements IMetricsTrackerDelegate {
-        final IMetricsTracker tracker;
-
-        MetricsTrackerDelegate(IMetricsTracker tracker) {
-            this.tracker = tracker;
-        }
-
-        @Override
-        public void recordConnectionUsage(final PoolEntry poolEntry) {
-            tracker.recordConnectionUsageMillis(poolEntry.getMillisSinceBorrowed());
-        }
-
-        @Override
-        public void recordConnectionCreated(long connectionCreatedMillis) {
-            tracker.recordConnectionCreatedMillis(connectionCreatedMillis);
-        }
-
-        @Override
-        public void recordBorrowTimeoutStats(long startTime) {
-            tracker.recordConnectionAcquiredNanos(ClockSource.elapsedNanos(startTime));
-        }
-
-        @Override
-        public void recordBorrowStats(final PoolEntry poolEntry, final long startTime) {
-            final long now = ClockSource.currentTime();
-            poolEntry.lastBorrowed = now;
-            tracker.recordConnectionAcquiredNanos(ClockSource.elapsedNanos(startTime, now));
-        }
-
-        @Override
-        public void recordConnectionTimeout() {
-            tracker.recordConnectionTimeout();
-        }
-
-        @Override
-        public void close() {
-            tracker.close();
-        }
-    }
-
-    /**
-     * A no-op implementation of the IMetricsTrackerDelegate that is used when metrics capture is
-     * disabled.
-     */
-    static final class NopMetricsTrackerDelegate implements IMetricsTrackerDelegate {
     }
 }

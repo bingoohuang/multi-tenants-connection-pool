@@ -33,34 +33,34 @@ import java.util.concurrent.Future;
  * @author Matthew Tambara (matthew.tambara@liferay.com)
  */
 public class ConcurrentCloseConnectionTest {
-   @Test
-   public void testConcurrentClose() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+    @Test
+    public void testConcurrentClose() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-      try (LightDataSource ds = new LightDataSource(config);
-           final Connection connection = ds.getConnection()) {
+        try (LightDataSource ds = new LightDataSource(config);
+             final Connection connection = ds.getConnection()) {
 
-         ExecutorService executorService = Executors.newFixedThreadPool(10);
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-         List<Future<?>> futures = new ArrayList<>();
+            List<Future<?>> futures = new ArrayList<>();
 
-         for (int i = 0; i < 500; i++) {
-            final PreparedStatement preparedStatement =
-               connection.prepareStatement("");
+            for (int i = 0; i < 500; i++) {
+                final PreparedStatement preparedStatement =
+                        connection.prepareStatement("");
 
-            futures.add(executorService.submit((Callable<Void>) () -> {
-               preparedStatement.close();
+                futures.add(executorService.submit((Callable<Void>) () -> {
+                    preparedStatement.close();
 
-               return null;
-            }));
-         }
+                    return null;
+                }));
+            }
 
-         executorService.shutdown();
+            executorService.shutdown();
 
-         for (Future<?> future : futures) {
-            future.get();
-         }
-      }
-   }
+            for (Future<?> future : futures) {
+                future.get();
+            }
+        }
+    }
 }

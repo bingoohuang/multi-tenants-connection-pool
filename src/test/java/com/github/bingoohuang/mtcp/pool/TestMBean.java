@@ -33,79 +33,79 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 
 public class TestMBean {
-   @Test
-   public void testMBeanRegistration() {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(1);
-      config.setRegisterMbeans(true);
-      config.setConnectionTimeout(2800);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+    @Test
+    public void testMBeanRegistration() {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(1);
+        config.setRegisterMbeans(true);
+        config.setConnectionTimeout(2800);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-      new LightDataSource(config).close();
-   }
+        new LightDataSource(config).close();
+    }
 
-   @Test
-   public void testMBeanReporting() throws SQLException, InterruptedException, MalformedObjectNameException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(3);
-      config.setMaximumPoolSize(5);
-      config.setRegisterMbeans(true);
-      config.setConnectionTimeout(2800);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+    @Test
+    public void testMBeanReporting() throws SQLException, InterruptedException, MalformedObjectNameException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(3);
+        config.setMaximumPoolSize(5);
+        config.setRegisterMbeans(true);
+        config.setConnectionTimeout(2800);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
 
-      try (LightDataSource ds = new LightDataSource(config)) {
+        try (LightDataSource ds = new LightDataSource(config)) {
 
-         TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
-
-         TimeUnit.SECONDS.sleep(1);
-
-         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-         ObjectName poolName = new ObjectName("com.github.bingoohuang.mtcp:type=Pool (testMBeanReporting)");
-         LightPoolMXBean lightPoolMXBean = JMX.newMXBeanProxy(mBeanServer, poolName, LightPoolMXBean.class);
-
-         assertEquals(0, lightPoolMXBean.getActiveConnections());
-         assertEquals(3, lightPoolMXBean.getIdleConnections());
-
-         try (Connection ignored = ds.getConnection()) {
-            assertEquals(1, lightPoolMXBean.getActiveConnections());
+            TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
 
             TimeUnit.SECONDS.sleep(1);
 
+            MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName poolName = new ObjectName("com.github.bingoohuang.mtcp:type=Pool (testMBeanReporting)");
+            LightPoolMXBean lightPoolMXBean = JMX.newMXBeanProxy(mBeanServer, poolName, LightPoolMXBean.class);
+
+            assertEquals(0, lightPoolMXBean.getActiveConnections());
             assertEquals(3, lightPoolMXBean.getIdleConnections());
-            assertEquals(4, lightPoolMXBean.getTotalConnections());
-         }
 
-         TimeUnit.SECONDS.sleep(2);
+            try (Connection ignored = ds.getConnection()) {
+                assertEquals(1, lightPoolMXBean.getActiveConnections());
 
-         assertEquals(0, lightPoolMXBean.getActiveConnections());
-         assertEquals(3, lightPoolMXBean.getIdleConnections());
-         assertEquals(3, lightPoolMXBean.getTotalConnections());
+                TimeUnit.SECONDS.sleep(1);
 
-      } finally {
-         System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
-      }
-   }
+                assertEquals(3, lightPoolMXBean.getIdleConnections());
+                assertEquals(4, lightPoolMXBean.getTotalConnections());
+            }
 
-   @Test
-   public void testMBeanChange() {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(3);
-      config.setMaximumPoolSize(5);
-      config.setRegisterMbeans(true);
-      config.setConnectionTimeout(2800);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+            TimeUnit.SECONDS.sleep(2);
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         LightConfigMXBean lightConfigMXBean = ds.getLightConfigMXBean();
-         lightConfigMXBean.setIdleTimeout(3000);
+            assertEquals(0, lightPoolMXBean.getActiveConnections());
+            assertEquals(3, lightPoolMXBean.getIdleConnections());
+            assertEquals(3, lightPoolMXBean.getTotalConnections());
 
-         assertEquals(3000, ds.getIdleTimeout());
-      }
-   }
+        } finally {
+            System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+        }
+    }
+
+    @Test
+    public void testMBeanChange() {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(3);
+        config.setMaximumPoolSize(5);
+        config.setRegisterMbeans(true);
+        config.setConnectionTimeout(2800);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+
+        try (LightDataSource ds = new LightDataSource(config)) {
+            LightConfigMXBean lightConfigMXBean = ds.getLightConfigMXBean();
+            lightConfigMXBean.setIdleTimeout(3000);
+
+            assertEquals(3000, ds.getIdleTimeout());
+        }
+    }
 }

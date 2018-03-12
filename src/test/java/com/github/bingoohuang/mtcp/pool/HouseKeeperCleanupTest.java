@@ -35,44 +35,44 @@ import static org.junit.Assert.assertEquals;
  */
 public class HouseKeeperCleanupTest {
 
-   private ScheduledThreadPoolExecutor executor;
+    private ScheduledThreadPoolExecutor executor;
 
-   @Before
-   public void before() throws Exception {
-      ThreadFactory threadFactory = new UtilityElf.DefaultThreadFactory("global housekeeper", true);
+    @Before
+    public void before() throws Exception {
+        ThreadFactory threadFactory = new UtilityElf.DefaultThreadFactory("global housekeeper", true);
 
-      executor = new ScheduledThreadPoolExecutor(1, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
-      executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-      executor.setRemoveOnCancelPolicy(true);
-   }
+        executor = new ScheduledThreadPoolExecutor(1, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+        executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+        executor.setRemoveOnCancelPolicy(true);
+    }
 
-   @Test
-   public void testHouseKeeperCleanupWithCustomExecutor() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(10);
-      config.setInitializationFailTimeout(Long.MAX_VALUE);
-      config.setConnectionTimeout(2500);
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-      config.setScheduledExecutor(executor);
+    @Test
+    public void testHouseKeeperCleanupWithCustomExecutor() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(10);
+        config.setInitializationFailTimeout(Long.MAX_VALUE);
+        config.setConnectionTimeout(2500);
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+        config.setScheduledExecutor(executor);
 
-      LightConfig config2 = TestElf.newLightConfig();
-      config.copyStateTo(config2);
+        LightConfig config2 = TestElf.newLightConfig();
+        config.copyStateTo(config2);
 
-      try (
-              final LightDataSource ds1 = new LightDataSource(config);
-              final LightDataSource ds2 = new LightDataSource(config2)
-      ) {
-         assertEquals("Scheduled tasks count not as expected, ", 2, executor.getQueue().size());
-      }
+        try (
+                final LightDataSource ds1 = new LightDataSource(config);
+                final LightDataSource ds2 = new LightDataSource(config2)
+        ) {
+            assertEquals("Scheduled tasks count not as expected, ", 2, executor.getQueue().size());
+        }
 
-      assertEquals("Scheduled tasks count not as expected, ", 0, executor.getQueue().size());
-   }
+        assertEquals("Scheduled tasks count not as expected, ", 0, executor.getQueue().size());
+    }
 
-   @After
-   public void after() throws Exception {
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
-   }
+    @After
+    public void after() throws Exception {
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
 
 }

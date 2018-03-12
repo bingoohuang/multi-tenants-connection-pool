@@ -1,41 +1,64 @@
 package com.github.bingoohuang.mtcp.util;
 
-public abstract class BagEntry {
-    interface State {
+import lombok.val;
+
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+
+public class BagEntry {
+    private static final AtomicIntegerFieldUpdater<BagEntry> stateUpdater
+            = AtomicIntegerFieldUpdater.newUpdater(BagEntry.class, "state");
+    private volatile int state;
+
+    private interface State {
         int STATE_FREE = 0;
         int STATE_USING = 1;
         int STATE_REMOVED = -1;
         int STATE_RESERVED = -2;
     }
 
-    protected abstract boolean compareAndSet(int expectState, int newState);
-
-    public abstract void setState(int newState);
-
-    public abstract int getState();
-
-    public boolean stateFreeToUsing() {
-        return compareAndSet(State.STATE_FREE, State.STATE_USING);
+    public int getState() {
+        return stateUpdater.get(this);
     }
 
-    public boolean stateUsingToRemoved() {
-        return compareAndSet(State.STATE_USING, State.STATE_REMOVED);
+    private void setState(int newState) {
+        stateUpdater.set(this, newState);
     }
 
-    public boolean stateReservedToRemoved() {
-        return compareAndSet(State.STATE_RESERVED, State.STATE_REMOVED);
+    public final boolean stateFreeToUsing() {
+        return stateUpdater.compareAndSet(this, State.STATE_FREE, State.STATE_USING);
     }
 
-    public boolean stateFreeToReserved() {
-        return compareAndSet(State.STATE_FREE, State.STATE_RESERVED);
+    public final boolean stateUsingToRemoved() {
+        return stateUpdater.compareAndSet(this, State.STATE_USING, State.STATE_REMOVED);
     }
 
-    public boolean stateReservedToFree() {
-        return compareAndSet(State.STATE_RESERVED, State.STATE_FREE);
+    public final boolean stateReservedToRemoved() {
+        return stateUpdater.compareAndSet(this, State.STATE_RESERVED, State.STATE_REMOVED);
     }
 
-    public String stateToString() {
-        switch (getState()) {
+    public final boolean stateFreeToReserved() {
+        return stateUpdater.compareAndSet(this, State.STATE_FREE, State.STATE_RESERVED);
+    }
+
+    public final boolean stateReservedToFree() {
+        return stateUpdater.compareAndSet(this, State.STATE_RESERVED, State.STATE_FREE);
+    }
+
+    public final void stateToFree() {
+        setState(State.STATE_FREE);
+    }
+
+    public final boolean isStateFree() {
+        return getState() == State.STATE_FREE;
+    }
+
+    public final boolean isStateUsing() {
+        return getState() == State.STATE_USING;
+    }
+
+    public final String stateToString() {
+        val currentState = this.state;
+        switch (currentState) {
             case State.STATE_USING:
                 return "USING";
             case State.STATE_FREE:
@@ -45,19 +68,8 @@ public abstract class BagEntry {
             case State.STATE_RESERVED:
                 return "RESERVED";
             default:
-                return "Invalid";
+                return "Invalid:" + currentState;
         }
     }
 
-    public void stateToFree() {
-        setState(State.STATE_FREE);
-    }
-
-    public boolean isStateFree() {
-        return getState() == State.STATE_FREE;
-    }
-
-    public boolean isStateUsing() {
-        return getState() == State.STATE_USING;
-    }
 }

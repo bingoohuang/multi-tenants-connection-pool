@@ -28,52 +28,52 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JdbcDriverTest {
-   private LightDataSource ds;
+    private LightDataSource ds;
 
-   @After
-   public void teardown() {
-      if (ds != null) {
-         ds.close();
-      }
-   }
+    @After
+    public void teardown() {
+        if (ds != null) {
+            ds.close();
+        }
+    }
 
-   @Test
-   public void driverTest1() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
-      config.setJdbcUrl("jdbc:stub");
-      config.addDataSourceProperty("user", "bart");
-      config.addDataSourceProperty("password", "simpson");
+    @Test
+    public void driverTest1() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
+        config.setJdbcUrl("jdbc:stub");
+        config.addDataSourceProperty("user", "bart");
+        config.addDataSourceProperty("password", "simpson");
 
-      ds = new LightDataSource(config);
+        ds = new LightDataSource(config);
 
-      assertTrue(ds.isWrapperFor(DriverDataSource.class));
+        assertTrue(ds.isWrapperFor(DriverDataSource.class));
 
-      DriverDataSource unwrap = ds.unwrap(DriverDataSource.class);
-      assertNotNull(unwrap);
+        DriverDataSource unwrap = ds.unwrap(DriverDataSource.class);
+        assertNotNull(unwrap);
 
-      try (Connection connection = ds.getConnection()) {
-         // test that getConnection() succeeds
-      }
-   }
+        try (Connection connection = ds.getConnection()) {
+            // test that getConnection() succeeds
+        }
+    }
 
-   @Test
-   public void driverTest2() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
+    @Test
+    public void driverTest2() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
 
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
-      config.setJdbcUrl("jdbc:invalid");
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
+        config.setJdbcUrl("jdbc:invalid");
 
-      try {
-         ds = new LightDataSource(config);
-      } catch (RuntimeException e) {
-         assertTrue(e.getMessage().contains("claims to not accept"));
-      }
-   }
+        try {
+            ds = new LightDataSource(config);
+        } catch (RuntimeException e) {
+            assertTrue(e.getMessage().contains("claims to not accept"));
+        }
+    }
 }

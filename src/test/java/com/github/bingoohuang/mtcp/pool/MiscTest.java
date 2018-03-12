@@ -37,76 +37,76 @@ import static org.junit.Assert.*;
  * @author Brett Wooldridge
  */
 public class MiscTest {
-   @Test
-   public void testLogWriter() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(4);
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-      TestElf.setConfigUnitTest(true);
+    @Test
+    public void testLogWriter() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(4);
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+        TestElf.setConfigUnitTest(true);
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         PrintWriter writer = new PrintWriter(System.out);
-         ds.setLogWriter(writer);
-         assertSame(writer, ds.getLogWriter());
-         assertEquals("testLogWriter", config.getPoolName());
-      } finally {
-         TestElf.setConfigUnitTest(false);
-      }
-   }
-
-   @Test
-   public void testInvalidIsolation() {
-      try {
-         UtilityElf.getTransactionIsolation("INVALID");
-         fail();
-      } catch (Exception e) {
-         assertTrue(e instanceof IllegalArgumentException);
-      }
-   }
-
-   @Test
-   public void testCreateInstance() {
-      try {
-         UtilityElf.createInstance("invalid", null);
-         fail();
-      } catch (RuntimeException e) {
-         assertTrue(e.getCause() instanceof ClassNotFoundException);
-      }
-   }
-
-   @Test
-   public void testLeakDetection() throws Exception {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      try (PrintStream ps = new PrintStream(baos, true)) {
-         TestElf.setSlf4jTargetStream(Class.forName("com.github.bingoohuang.mtcp.pool.ProxyLeakTask"), ps);
-         TestElf.setConfigUnitTest(true);
-
-         LightConfig config = TestElf.newLightConfig();
-         config.setMinimumIdle(0);
-         config.setMaximumPoolSize(4);
-         config.setThreadFactory(Executors.defaultThreadFactory());
-         config.setMetricRegistry(null);
-         config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(1));
-         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-         try (LightDataSource ds = new LightDataSource(config)) {
-            TestElf.setSlf4jLogLevel(LightPool.class, Level.DEBUG);
-            TestElf.getPool(ds).logPoolState();
-
-            try (Connection connection = ds.getConnection()) {
-               UtilityElf.quietlySleep(SECONDS.toMillis(4));
-               connection.close();
-               UtilityElf.quietlySleep(SECONDS.toMillis(1));
-               ps.close();
-               String s = new String(baos.toByteArray());
-               assertNotNull("Exception string was null", s);
-               assertTrue("Expected exception to contain 'Connection leak detection' but contains *" + s + "*", s.contains("Connection leak detection"));
-            }
-         } finally {
+        try (LightDataSource ds = new LightDataSource(config)) {
+            PrintWriter writer = new PrintWriter(System.out);
+            ds.setLogWriter(writer);
+            assertSame(writer, ds.getLogWriter());
+            assertEquals("testLogWriter", config.getPoolName());
+        } finally {
             TestElf.setConfigUnitTest(false);
-            TestElf.setSlf4jLogLevel(LightPool.class, Level.INFO);
-         }
-      }
-   }
+        }
+    }
+
+    @Test
+    public void testInvalidIsolation() {
+        try {
+            UtilityElf.getTransactionIsolation("INVALID");
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void testCreateInstance() {
+        try {
+            UtilityElf.createInstance("invalid", null);
+            fail();
+        } catch (RuntimeException e) {
+            assertTrue(e.getCause() instanceof ClassNotFoundException);
+        }
+    }
+
+    @Test
+    public void testLeakDetection() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (PrintStream ps = new PrintStream(baos, true)) {
+            TestElf.setSlf4jTargetStream(Class.forName("com.github.bingoohuang.mtcp.pool.ProxyLeakTask"), ps);
+            TestElf.setConfigUnitTest(true);
+
+            LightConfig config = TestElf.newLightConfig();
+            config.setMinimumIdle(0);
+            config.setMaximumPoolSize(4);
+            config.setThreadFactory(Executors.defaultThreadFactory());
+            config.setMetricRegistry(null);
+            config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(1));
+            config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+
+            try (LightDataSource ds = new LightDataSource(config)) {
+                TestElf.setSlf4jLogLevel(LightPool.class, Level.DEBUG);
+                TestElf.getPool(ds).logPoolState();
+
+                try (Connection connection = ds.getConnection()) {
+                    UtilityElf.quietlySleep(SECONDS.toMillis(4));
+                    connection.close();
+                    UtilityElf.quietlySleep(SECONDS.toMillis(1));
+                    ps.close();
+                    String s = new String(baos.toByteArray());
+                    assertNotNull("Exception string was null", s);
+                    assertTrue("Expected exception to contain 'Connection leak detection' but contains *" + s + "*", s.contains("Connection leak detection"));
+                }
+            } finally {
+                TestElf.setConfigUnitTest(false);
+                TestElf.setSlf4jLogLevel(LightPool.class, Level.INFO);
+            }
+        }
+    }
 }

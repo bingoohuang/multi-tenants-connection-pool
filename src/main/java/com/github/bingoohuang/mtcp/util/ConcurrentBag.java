@@ -57,23 +57,22 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
     private final CopyOnWriteArrayList<T> sharedList;
 
     private final ThreadLocalList<T> threadLocalList;
-    private final IBagStateListener listener;
+    private final BagStateListener listener;
     private final AtomicInteger waiters;
     private volatile boolean closed;
 
     private final SynchronousQueue<T> handoffQueue;
 
-
-    public interface IBagStateListener {
+    public interface BagStateListener {
         void addBagItem(int waiting);
     }
 
     /**
      * Construct a ConcurrentBag with the specified listener.
      *
-     * @param listener the IBagStateListener to attach to this bag
+     * @param listener the BagStateListener to attach to this bag
      */
-    public ConcurrentBag(final IBagStateListener listener) {
+    public ConcurrentBag(final BagStateListener listener) {
         this.listener = listener;
 
         this.handoffQueue = new SynchronousQueue<>(true);
@@ -101,7 +100,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
         // Otherwise, scan the shared list ... then poll the handoff queue
         val waiting = waiters.incrementAndGet();
         try {
-            for (T bagEntry : sharedList) {
+            for (val bagEntry : sharedList) {
                 if (bagEntry.stateFreeToUsing()) {
                     // If we may have stolen another waiter's connection, request another bag add.
                     if (waiting > 1) {

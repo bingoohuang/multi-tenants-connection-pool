@@ -28,7 +28,6 @@ import com.github.bingoohuang.mtcp.metrics.dropwizard.CodahaleMetricsTrackerFact
 import com.github.bingoohuang.mtcp.metrics.micrometer.MicrometerMetricsTrackerFactory;
 import com.github.bingoohuang.mtcp.util.ClockSource;
 import com.github.bingoohuang.mtcp.util.ConcurrentBag;
-import com.github.bingoohuang.mtcp.util.SuspendResumeLock;
 import com.github.bingoohuang.mtcp.util.UtilityElf;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -53,9 +52,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @author Brett Wooldridge
  */
 @Slf4j
-public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.IBagStateListener {
+public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener {
     public static final int POOL_NORMAL = 0;
-    public static final int POOL_SUSPENDED = 1;
     public static final int POOL_SHUTDOWN = 2;
 
     public volatile int poolState;
@@ -75,7 +73,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     private final ConcurrentBag<PoolEntry> connectionBag;
 
     private final ProxyLeakTaskFactory leakTaskFactory;
-    private final SuspendResumeLock suspendResumeLock;
 
     private final ScheduledExecutorService houseKeepingExecutorService;
     private ScheduledFuture<?> houseKeeperTask;
@@ -89,7 +86,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         super(config);
 
         this.connectionBag = new ConcurrentBag<>(this);
-        this.suspendResumeLock = config.isAllowPoolSuspension() ? new SuspendResumeLock() : SuspendResumeLock.FAUX_LOCK;
 
         this.houseKeepingExecutorService = initializeHouseKeepingExecutorService();
 
@@ -135,7 +131,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      * @throws SQLException thrown if a timeout occurs trying to obtain a connection
      */
     public Connection getConnection(final long hardTimeout) throws SQLException {
-        suspendResumeLock.acquire();
         val startTime = ClockSource.currentTime();
 
         try {
@@ -161,8 +156,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new SQLException(poolName + " - Interrupted during connection acquisition", e);
-        } finally {
-            suspendResumeLock.release();
         }
     }
 
@@ -253,7 +246,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     }
 
     /**
-     * Set the MetricsTrackerFactory to be used to create the IMetricsTracker instance used by the pool.
+     * Set the MetricsTrackerFactory to be used to create the MetricsTracker instance used by the pool.
      *
      * @param metricsTrackerFactory an instance of a class that subclasses MetricsTrackerFactory
      */
@@ -278,7 +271,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     }
 
     // ***********************************************************************
-    //                        IBagStateListener callback
+    //                        BagStateListener callback
     // ***********************************************************************
 
     /**
@@ -334,31 +327,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     @Override
     public void softEvictConnections() {
         connectionBag.values().forEach(poolEntry -> softEvictConnection(poolEntry, "(connection evicted)", false /* not owner */));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void suspendPool() {
-        if (suspendResumeLock == SuspendResumeLock.FAUX_LOCK) {
-            throw new IllegalStateException(poolName + " - is not suspendable");
-        } else if (poolState != POOL_SUSPENDED) {
-            suspendResumeLock.suspend();
-            poolState = POOL_SUSPENDED;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void resumePool() {
-        if (poolState == POOL_SUSPENDED) {
-            poolState = POOL_NORMAL;
-            fillPool();
-            suspendResumeLock.resume();
-        }
     }
 
     // ***********************************************************************
@@ -731,16 +699,4 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         }
     }
 
-    public static class PoolInitializationException extends RuntimeException {
-        private static final long serialVersionUID = 929872118275916520L;
-
-        /**
-         * Construct an exception, possibly wrapping the provided Throwable as the cause.
-         *
-         * @param t the Throwable to wrap
-         */
-        public PoolInitializationException(Throwable t) {
-            super("Failed to initialize pool: " + t.getMessage(), t);
-        }
-    }
 }

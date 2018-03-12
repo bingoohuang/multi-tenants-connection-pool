@@ -42,53 +42,53 @@ import static org.mockito.Mockito.when;
  * async the connections fixes this issue.
  */
 public class TestConnectionCloseBlocking {
-   private static volatile boolean shouldFail = false;
+    private static volatile boolean shouldFail = false;
 
-   // @Test
-   public void testConnectionCloseBlocking() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTimeout(1500);
-      config.setDataSource(new CustomMockDataSource());
+    // @Test
+    public void testConnectionCloseBlocking() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTimeout(1500);
+        config.setDataSource(new CustomMockDataSource());
 
-      long start = ClockSource.currentTime();
-      try (LightDataSource ds = new LightDataSource(config);
-           Connection connection = ds.getConnection()) {
+        long start = ClockSource.currentTime();
+        try (LightDataSource ds = new LightDataSource(config);
+             Connection connection = ds.getConnection()) {
 
-         connection.close();
+            connection.close();
 
-         // Light only checks for validity for connections with lastAccess > 1000 ms so we sleep for 1001 ms to force
-         // Light to do a connection validation which will fail and will trigger the connection to be closed
-         UtilityElf.quietlySleep(1100L);
+            // Light only checks for validity for connections with lastAccess > 1000 ms so we sleep for 1001 ms to force
+            // Light to do a connection validation which will fail and will trigger the connection to be closed
+            UtilityElf.quietlySleep(1100L);
 
-         shouldFail = true;
+            shouldFail = true;
 
-         // on physical connection close we sleep 2 seconds
-         try (Connection connection2 = ds.getConnection()) {
-            assertTrue("Waited longer than timeout", (ClockSource.elapsedMillis(start) < config.getConnectionTimeout()));
-         }
-      } catch (SQLException e) {
-         assertTrue("getConnection failed because close connection took longer than timeout", (ClockSource.elapsedMillis(start) < config.getConnectionTimeout()));
-      }
-   }
-
-   private static class CustomMockDataSource extends MockDataSource {
-      @Override
-      public Connection getConnection() throws SQLException {
-         Connection mockConnection = super.getConnection();
-         when(mockConnection.isValid(anyInt())).thenReturn(!shouldFail);
-         doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-               if (shouldFail) {
-                  SECONDS.sleep(2);
-               }
-               return null;
+            // on physical connection close we sleep 2 seconds
+            try (Connection connection2 = ds.getConnection()) {
+                assertTrue("Waited longer than timeout", (ClockSource.elapsedMillis(start) < config.getConnectionTimeout()));
             }
-         }).when(mockConnection).close();
-         return mockConnection;
-      }
-   }
+        } catch (SQLException e) {
+            assertTrue("getConnection failed because close connection took longer than timeout", (ClockSource.elapsedMillis(start) < config.getConnectionTimeout()));
+        }
+    }
+
+    private static class CustomMockDataSource extends MockDataSource {
+        @Override
+        public Connection getConnection() throws SQLException {
+            Connection mockConnection = super.getConnection();
+            when(mockConnection.isValid(anyInt())).thenReturn(!shouldFail);
+            doAnswer(new Answer<Void>() {
+                @Override
+                public Void answer(InvocationOnMock invocation) throws Throwable {
+                    if (shouldFail) {
+                        SECONDS.sleep(2);
+                    }
+                    return null;
+                }
+            }).when(mockConnection).close();
+            return mockConnection;
+        }
+    }
 
 }

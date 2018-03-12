@@ -12,27 +12,27 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class CodaHaleMetricsTrackerTest {
 
-   @Mock
-   public MetricRegistry mockMetricRegistry;
+    @Mock
+    public MetricRegistry mockMetricRegistry;
 
-   private CodaHaleMetricsTracker testee;
+    private CodaHaleMetricsTracker testee;
 
-   @Before
-   public void setup() {
-      testee = new CodaHaleMetricsTracker("mypool", null, mockMetricRegistry);
-   }
+    @Before
+    public void setup() {
+        testee = new CodaHaleMetricsTracker("mypool", null, mockMetricRegistry);
+    }
 
-   @Test
-   public void close() throws Exception {
-      testee.close();
+    @Test
+    public void close() throws Exception {
+        testee.close();
 
-      verify(mockMetricRegistry).remove("mypool.pool.Wait");
-      verify(mockMetricRegistry).remove("mypool.pool.Usage");
-      verify(mockMetricRegistry).remove("mypool.pool.ConnectionCreation");
-      verify(mockMetricRegistry).remove("mypool.pool.ConnectionTimeoutRate");
-      verify(mockMetricRegistry).remove("mypool.pool.TotalConnections");
-      verify(mockMetricRegistry).remove("mypool.pool.IdleConnections");
-      verify(mockMetricRegistry).remove("mypool.pool.ActiveConnections");
-      verify(mockMetricRegistry).remove("mypool.pool.PendingConnections");
-   }
+        verify(mockMetricRegistry).remove("mypool.pool.Wait");
+        verify(mockMetricRegistry).remove("mypool.pool.Usage");
+        verify(mockMetricRegistry).remove("mypool.pool.ConnectionCreation");
+        verify(mockMetricRegistry).remove("mypool.pool.ConnectionTimeoutRate");
+        verify(mockMetricRegistry).remove("mypool.pool.TotalConnections");
+        verify(mockMetricRegistry).remove("mypool.pool.IdleConnections");
+        verify(mockMetricRegistry).remove("mypool.pool.ActiveConnections");
+        verify(mockMetricRegistry).remove("mypool.pool.PendingConnections");
+    }
 }

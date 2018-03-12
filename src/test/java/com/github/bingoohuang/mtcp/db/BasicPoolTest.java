@@ -37,106 +37,106 @@ import static org.junit.Assert.assertNotNull;
  * @author brettw
  */
 public class BasicPoolTest {
-   @Before
-   public void setup() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(2);
-      config.setConnectionTestQuery("SELECT 1");
-      config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    @Before
+    public void setup() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(2);
+        config.setConnectionTestQuery("SELECT 1");
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
 
-      try (LightDataSource ds = new LightDataSource(config);
-           Connection conn = ds.getConnection();
-           Statement stmt = conn.createStatement()) {
-         stmt.executeUpdate("DROP TABLE IF EXISTS basic_pool_test");
-         stmt.executeUpdate("CREATE TABLE basic_pool_test ("
-            + "id INTEGER NOT NULL IDENTITY PRIMARY KEY, "
-            + "timestamp TIMESTAMP, "
-            + "string VARCHAR(128), "
-            + "string_from_number NUMERIC "
-            + ")");
-      }
-   }
+        try (LightDataSource ds = new LightDataSource(config);
+             Connection conn = ds.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DROP TABLE IF EXISTS basic_pool_test");
+            stmt.executeUpdate("CREATE TABLE basic_pool_test ("
+                    + "id INTEGER NOT NULL IDENTITY PRIMARY KEY, "
+                    + "timestamp TIMESTAMP, "
+                    + "string VARCHAR(128), "
+                    + "string_from_number NUMERIC "
+                    + ")");
+        }
+    }
 
-   @Test
-   public void testIdleTimeout() throws InterruptedException, SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(5);
-      config.setMaximumPoolSize(10);
-      config.setConnectionTestQuery("SELECT 1");
-      config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    @Test
+    public void testIdleTimeout() throws InterruptedException, SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(5);
+        config.setMaximumPoolSize(10);
+        config.setConnectionTestQuery("SELECT 1");
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+        try (LightDataSource ds = new LightDataSource(config)) {
+            System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
 
-         SECONDS.sleep(1);
+            SECONDS.sleep(1);
 
-         LightPool pool = TestElf.getPool(ds);
+            LightPool pool = TestElf.getPool(ds);
 
-         TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
+            TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
 
-         assertEquals("Total connections not as expected", 5, pool.getTotalConnections());
-         assertEquals("Idle connections not as expected", 5, pool.getIdleConnections());
+            assertEquals("Total connections not as expected", 5, pool.getTotalConnections());
+            assertEquals("Idle connections not as expected", 5, pool.getIdleConnections());
 
-         try (Connection connection = ds.getConnection()) {
-            Assert.assertNotNull(connection);
+            try (Connection connection = ds.getConnection()) {
+                Assert.assertNotNull(connection);
 
-            MILLISECONDS.sleep(1500);
+                MILLISECONDS.sleep(1500);
 
-            assertEquals("Second total connections not as expected", 6, pool.getTotalConnections());
-            assertEquals("Second idle connections not as expected", 5, pool.getIdleConnections());
-         }
+                assertEquals("Second total connections not as expected", 6, pool.getTotalConnections());
+                assertEquals("Second idle connections not as expected", 5, pool.getIdleConnections());
+            }
 
-         assertEquals("Idle connections not as expected", 6, pool.getIdleConnections());
+            assertEquals("Idle connections not as expected", 6, pool.getIdleConnections());
 
-         SECONDS.sleep(2);
+            SECONDS.sleep(2);
 
-         assertEquals("Third total connections not as expected", 5, pool.getTotalConnections());
-         assertEquals("Third idle connections not as expected", 5, pool.getIdleConnections());
-      }
-   }
+            assertEquals("Third total connections not as expected", 5, pool.getTotalConnections());
+            assertEquals("Third idle connections not as expected", 5, pool.getIdleConnections());
+        }
+    }
 
-   @Test
-   public void testIdleTimeout2() throws InterruptedException, SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMaximumPoolSize(50);
-      config.setConnectionTestQuery("SELECT 1");
-      config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    @Test
+    public void testIdleTimeout2() throws InterruptedException, SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMaximumPoolSize(50);
+        config.setConnectionTestQuery("SELECT 1");
+        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
+        config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+        try (LightDataSource ds = new LightDataSource(config)) {
+            System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
 
-         SECONDS.sleep(1);
+            SECONDS.sleep(1);
 
-         LightPool pool = TestElf.getPool(ds);
+            LightPool pool = TestElf.getPool(ds);
 
-         TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
+            TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
 
-         assertEquals("Total connections not as expected", 50, pool.getTotalConnections());
-         assertEquals("Idle connections not as expected", 50, pool.getIdleConnections());
+            assertEquals("Total connections not as expected", 50, pool.getTotalConnections());
+            assertEquals("Idle connections not as expected", 50, pool.getIdleConnections());
 
-         try (Connection connection = ds.getConnection()) {
-            assertNotNull(connection);
+            try (Connection connection = ds.getConnection()) {
+                assertNotNull(connection);
 
-            MILLISECONDS.sleep(1500);
+                MILLISECONDS.sleep(1500);
 
-            assertEquals("Second total connections not as expected", 50, pool.getTotalConnections());
-            assertEquals("Second idle connections not as expected", 49, pool.getIdleConnections());
-         }
+                assertEquals("Second total connections not as expected", 50, pool.getTotalConnections());
+                assertEquals("Second idle connections not as expected", 49, pool.getIdleConnections());
+            }
 
-         assertEquals("Idle connections not as expected", 50, pool.getIdleConnections());
+            assertEquals("Idle connections not as expected", 50, pool.getIdleConnections());
 
-         SECONDS.sleep(3);
+            SECONDS.sleep(3);
 
-         assertEquals("Third total connections not as expected", 50, pool.getTotalConnections());
-         assertEquals("Third idle connections not as expected", 50, pool.getIdleConnections());
-      }
-   }
+            assertEquals("Third total connections not as expected", 50, pool.getTotalConnections());
+            assertEquals("Third idle connections not as expected", 50, pool.getIdleConnections());
+        }
+    }
 }

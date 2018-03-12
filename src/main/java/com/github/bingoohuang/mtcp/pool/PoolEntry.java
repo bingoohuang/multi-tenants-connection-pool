@@ -25,7 +25,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 
 /**
@@ -34,15 +33,11 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
  * @author Brett Wooldridge
  */
 @Slf4j final class PoolEntry extends BagEntry {
-    private static final AtomicIntegerFieldUpdater<PoolEntry> stateUpdater
-            = AtomicIntegerFieldUpdater.newUpdater(PoolEntry.class, "state");
-
     Connection connection;
     long lastAccessed;
     long lastBorrowed;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private volatile int state = 0;
     private volatile boolean evict;
 
     private volatile ScheduledFuture<?> endOfLife;
@@ -128,30 +123,6 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
     // ***********************************************************************
     //                      BagEntry methods
     // ***********************************************************************
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getState() {
-        return stateUpdater.get(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean compareAndSet(int expect, int update) {
-        return stateUpdater.compareAndSet(this, expect, update);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setState(int update) {
-        stateUpdater.set(this, update);
-    }
 
     Connection close() {
         val eol = endOfLife;

@@ -47,78 +47,78 @@ import java.util.concurrent.TimeUnit;
  * @author Brett Wooldridge
  */
 public final class CodahaleHealthChecker {
-   /**
-    * Register Dropwizard health checks.
-    *
-    * @param pool         the pool to register health checks for
-    * @param lightConfig the pool configuration
-    * @param registry     the HealthCheckRegistry into which checks will be registered
-    */
-   public static void registerHealthChecks(final LightPool pool, final LightConfig lightConfig, final HealthCheckRegistry registry) {
-      final Properties healthCheckProperties = lightConfig.getHealthCheckProperties();
-      final MetricRegistry metricRegistry = (MetricRegistry) lightConfig.getMetricRegistry();
+    /**
+     * Register Dropwizard health checks.
+     *
+     * @param pool        the pool to register health checks for
+     * @param lightConfig the pool configuration
+     * @param registry    the HealthCheckRegistry into which checks will be registered
+     */
+    public static void registerHealthChecks(final LightPool pool, final LightConfig lightConfig, final HealthCheckRegistry registry) {
+        final Properties healthCheckProperties = lightConfig.getHealthCheckProperties();
+        final MetricRegistry metricRegistry = (MetricRegistry) lightConfig.getMetricRegistry();
 
-      final long checkTimeoutMs = Long.parseLong(healthCheckProperties.getProperty("connectivityCheckTimeoutMs", String.valueOf(lightConfig.getConnectionTimeout())));
-      registry.register(MetricRegistry.name(lightConfig.getPoolName(), "pool", "ConnectivityCheck"), new ConnectivityHealthCheck(pool, checkTimeoutMs));
+        final long checkTimeoutMs = Long.parseLong(healthCheckProperties.getProperty("connectivityCheckTimeoutMs", String.valueOf(lightConfig.getConnectionTimeout())));
+        registry.register(MetricRegistry.name(lightConfig.getPoolName(), "pool", "ConnectivityCheck"), new ConnectivityHealthCheck(pool, checkTimeoutMs));
 
-      final long expected99thPercentile = Long.parseLong(healthCheckProperties.getProperty("expected99thPercentileMs", "0"));
-      if (metricRegistry != null && expected99thPercentile > 0) {
-         SortedMap<String, Timer> timers = metricRegistry.getTimers(new MetricFilter() {
-            @Override
-            public boolean matches(String name, Metric metric) {
-               return name.equals(MetricRegistry.name(lightConfig.getPoolName(), "pool", "Wait"));
+        final long expected99thPercentile = Long.parseLong(healthCheckProperties.getProperty("expected99thPercentileMs", "0"));
+        if (metricRegistry != null && expected99thPercentile > 0) {
+            SortedMap<String, Timer> timers = metricRegistry.getTimers(new MetricFilter() {
+                @Override
+                public boolean matches(String name, Metric metric) {
+                    return name.equals(MetricRegistry.name(lightConfig.getPoolName(), "pool", "Wait"));
+                }
+            });
+
+            if (!timers.isEmpty()) {
+                final Timer timer = timers.entrySet().iterator().next().getValue();
+                registry.register(MetricRegistry.name(lightConfig.getPoolName(), "pool", "Connection99Percent"), new Connection99Percent(timer, expected99thPercentile));
             }
-         });
+        }
+    }
 
-         if (!timers.isEmpty()) {
-            final Timer timer = timers.entrySet().iterator().next().getValue();
-            registry.register(MetricRegistry.name(lightConfig.getPoolName(), "pool", "Connection99Percent"), new Connection99Percent(timer, expected99thPercentile));
-         }
-      }
-   }
+    private CodahaleHealthChecker() {
+        // private constructor
+    }
 
-   private CodahaleHealthChecker() {
-      // private constructor
-   }
+    private static class ConnectivityHealthCheck extends HealthCheck {
+        private final LightPool pool;
+        private final long checkTimeoutMs;
 
-   private static class ConnectivityHealthCheck extends HealthCheck {
-      private final LightPool pool;
-      private final long checkTimeoutMs;
+        ConnectivityHealthCheck(final LightPool pool, final long checkTimeoutMs) {
+            this.pool = pool;
+            this.checkTimeoutMs = (checkTimeoutMs > 0 && checkTimeoutMs != Integer.MAX_VALUE ? checkTimeoutMs : TimeUnit.SECONDS.toMillis(10));
+        }
 
-      ConnectivityHealthCheck(final LightPool pool, final long checkTimeoutMs) {
-         this.pool = pool;
-         this.checkTimeoutMs = (checkTimeoutMs > 0 && checkTimeoutMs != Integer.MAX_VALUE ? checkTimeoutMs : TimeUnit.SECONDS.toMillis(10));
-      }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected Result check() throws Exception {
+            try (Connection connection = pool.getConnection(checkTimeoutMs)) {
+                return Result.healthy();
+            } catch (SQLException e) {
+                return Result.unhealthy(e);
+            }
+        }
+    }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      protected Result check() throws Exception {
-         try (Connection connection = pool.getConnection(checkTimeoutMs)) {
-            return Result.healthy();
-         } catch (SQLException e) {
-            return Result.unhealthy(e);
-         }
-      }
-   }
+    private static class Connection99Percent extends HealthCheck {
+        private final Timer waitTimer;
+        private final long expected99thPercentile;
 
-   private static class Connection99Percent extends HealthCheck {
-      private final Timer waitTimer;
-      private final long expected99thPercentile;
+        Connection99Percent(final Timer waitTimer, final long expected99thPercentile) {
+            this.waitTimer = waitTimer;
+            this.expected99thPercentile = expected99thPercentile;
+        }
 
-      Connection99Percent(final Timer waitTimer, final long expected99thPercentile) {
-         this.waitTimer = waitTimer;
-         this.expected99thPercentile = expected99thPercentile;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      protected Result check() throws Exception {
-         final long the99thPercentile = TimeUnit.NANOSECONDS.toMillis(Math.round(waitTimer.getSnapshot().get99thPercentile()));
-         return the99thPercentile <= expected99thPercentile ? Result.healthy() : Result.unhealthy("99th percentile connection wait time of %dms exceeds the threshold %dms", the99thPercentile, expected99thPercentile);
-      }
-   }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected Result check() throws Exception {
+            final long the99thPercentile = TimeUnit.NANOSECONDS.toMillis(Math.round(waitTimer.getSnapshot().get99thPercentile()));
+            return the99thPercentile <= expected99thPercentile ? Result.healthy() : Result.unhealthy("99th percentile connection wait time of %dms exceeds the threshold %dms", the99thPercentile, expected99thPercentile);
+        }
+    }
 }

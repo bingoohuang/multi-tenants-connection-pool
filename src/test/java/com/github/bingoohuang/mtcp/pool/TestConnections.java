@@ -38,574 +38,484 @@ import static org.junit.Assert.*;
  * @author Brett Wooldridge
  */
 public class TestConnections {
-   @Before
-   public void before() {
-      TestElf.setSlf4jTargetStream(LightPool.class, System.err);
-      TestElf.setSlf4jLogLevel(LightPool.class, Level.DEBUG);
-      TestElf.setSlf4jLogLevel(PoolBase.class, Level.DEBUG);
-   }
+    @Before
+    public void before() {
+        TestElf.setSlf4jTargetStream(LightPool.class, System.err);
+        TestElf.setSlf4jLogLevel(LightPool.class, Level.DEBUG);
+        TestElf.setSlf4jLogLevel(PoolBase.class, Level.DEBUG);
+    }
 
-   @After
-   public void after() {
-      System.getProperties().remove("com.github.bingoohuang.mtcp.housekeeping.periodMs");
-      TestElf.setSlf4jLogLevel(LightPool.class, Level.WARN);
-      TestElf.setSlf4jLogLevel(PoolBase.class, Level.WARN);
-   }
+    @After
+    public void after() {
+        System.getProperties().remove("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+        TestElf.setSlf4jLogLevel(LightPool.class, Level.WARN);
+        TestElf.setSlf4jLogLevel(PoolBase.class, Level.WARN);
+    }
 
-   @Test
-   public void testCreate() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setConnectionInitSql("SELECT 1");
-      config.setReadOnly(true);
-      config.setConnectionTimeout(2500);
-      config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+    @Test
+    public void testCreate() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setConnectionInitSql("SELECT 1");
+        config.setReadOnly(true);
+        config.setConnectionTimeout(2500);
+        config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         ds.setLoginTimeout(10);
-         assertSame(10, ds.getLoginTimeout());
+        try (LightDataSource ds = new LightDataSource(config)) {
+            ds.setLoginTimeout(10);
+            assertSame(10, ds.getLoginTimeout());
 
-         LightPool pool = TestElf.getPool(ds);
-         ds.getConnection().close();
-         assertSame("Total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
+            LightPool pool = TestElf.getPool(ds);
+            ds.getConnection().close();
+            assertSame("Total connections not as expected", 1, pool.getTotalConnections());
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
 
-         try (Connection connection = ds.getConnection();
-              PreparedStatement statement = connection.prepareStatement("SELECT * FROM device WHERE device_id=?")) {
+            try (Connection connection = ds.getConnection();
+                 PreparedStatement statement = connection.prepareStatement("SELECT * FROM device WHERE device_id=?")) {
 
-            assertNotNull(connection);
-            assertNotNull(statement);
+                assertNotNull(connection);
+                assertNotNull(statement);
+
+                assertSame("Total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
+
+                statement.setInt(1, 0);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    assertNotNull(resultSet);
+
+                    assertFalse(resultSet.next());
+                }
+            }
 
             assertSame("Total connections not as expected", 1, pool.getTotalConnections());
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
+        }
+    }
+
+    @Test
+    public void testMaxLifetime() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTimeout(2500);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setInitializationFailTimeout(Long.MAX_VALUE);
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
+
+        TestElf.setConfigUnitTest(true);
+        try (LightDataSource ds = new LightDataSource(config)) {
+            System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+
+            TestElf.getUnsealedConfig(ds).setMaxLifetime(700);
+
+            LightPool pool = TestElf.getPool(ds);
+
+            assertSame("Total connections not as expected", 0, pool.getTotalConnections());
             assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
 
-            statement.setInt(1, 0);
+            Connection unwrap;
+            Connection unwrap2;
+            try (Connection connection = ds.getConnection()) {
+                unwrap = connection.unwrap(Connection.class);
+                assertNotNull(connection);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-               assertNotNull(resultSet);
-
-               assertFalse(resultSet.next());
+                assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
             }
-         }
 
-         assertSame("Total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
-      }
-   }
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
 
-   @Test
-   public void testMaxLifetime() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTimeout(2500);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setInitializationFailTimeout(Long.MAX_VALUE);
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+            try (Connection connection = ds.getConnection()) {
+                unwrap2 = connection.unwrap(Connection.class);
+                assertSame(unwrap, unwrap2);
+                assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
+            }
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
+            UtilityElf.quietlySleep(TimeUnit.SECONDS.toMillis(2));
 
-      TestElf.setConfigUnitTest(true);
-      try (LightDataSource ds = new LightDataSource(config)) {
-         System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+            try (Connection connection = ds.getConnection()) {
+                unwrap2 = connection.unwrap(Connection.class);
+                assertNotSame("Expected a different connection", unwrap, unwrap2);
+            }
 
-         TestElf.getUnsealedConfig(ds).setMaxLifetime(700);
+            assertSame("Post total connections not as expected", 1, pool.getTotalConnections());
+            assertSame("Post idle connections not as expected", 1, pool.getIdleConnections());
+        } finally {
+            TestElf.setConfigUnitTest(false);
+        }
+    }
 
-         LightPool pool = TestElf.getPool(ds);
+    @Test
+    public void testMaxLifetime2() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTimeout(2500);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         assertSame("Total connections not as expected", 0, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
 
-         Connection unwrap;
-         Connection unwrap2;
-         try (Connection connection = ds.getConnection()) {
-            unwrap = connection.unwrap(Connection.class);
-            assertNotNull(connection);
+        TestElf.setConfigUnitTest(true);
+        try (LightDataSource ds = new LightDataSource(config)) {
+            TestElf.getUnsealedConfig(ds).setMaxLifetime(700);
 
-            assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
-            assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
-         }
+            LightPool pool = TestElf.getPool(ds);
+            assertSame("Total connections not as expected", 0, pool.getTotalConnections());
+            assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
 
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
+            Connection unwrap;
+            Connection unwrap2;
+            try (Connection connection = ds.getConnection()) {
+                unwrap = connection.unwrap(Connection.class);
+                assertNotNull(connection);
 
-         try (Connection connection = ds.getConnection()) {
-            unwrap2 = connection.unwrap(Connection.class);
-            assertSame(unwrap, unwrap2);
-            assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
-            assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
-         }
+                assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
+            }
 
-         UtilityElf.quietlySleep(TimeUnit.SECONDS.toMillis(2));
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
 
-         try (Connection connection = ds.getConnection()) {
-            unwrap2 = connection.unwrap(Connection.class);
-            assertNotSame("Expected a different connection", unwrap, unwrap2);
-         }
+            try (Connection connection = ds.getConnection()) {
+                unwrap2 = connection.unwrap(Connection.class);
+                assertSame(unwrap, unwrap2);
+                assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
+            }
 
-         assertSame("Post total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Post idle connections not as expected", 1, pool.getIdleConnections());
-      } finally {
-         TestElf.setConfigUnitTest(false);
-      }
-   }
+            UtilityElf.quietlySleep(800);
 
-   @Test
-   public void testMaxLifetime2() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTimeout(2500);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+            try (Connection connection = ds.getConnection()) {
+                unwrap2 = connection.unwrap(Connection.class);
+                assertNotSame("Expected a different connection", unwrap, unwrap2);
+            }
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "100");
+            assertSame("Post total connections not as expected", 1, pool.getTotalConnections());
+            assertSame("Post idle connections not as expected", 1, pool.getIdleConnections());
+        } finally {
+            TestElf.setConfigUnitTest(false);
+        }
+    }
 
-      TestElf.setConfigUnitTest(true);
-      try (LightDataSource ds = new LightDataSource(config)) {
-         TestElf.getUnsealedConfig(ds).setMaxLifetime(700);
+    @Test
+    public void testDoubleClose() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTimeout(2500);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         LightPool pool = TestElf.getPool(ds);
-         assertSame("Total connections not as expected", 0, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
+        try (LightDataSource ds = new LightDataSource(config);
+             Connection connection = ds.getConnection()) {
+            connection.close();
 
-         Connection unwrap;
-         Connection unwrap2;
-         try (Connection connection = ds.getConnection()) {
-            unwrap = connection.unwrap(Connection.class);
-            assertNotNull(connection);
+            // should no-op
+            connection.abort(null);
 
-            assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
-            assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
-         }
+            assertTrue("Connection should have closed", connection.isClosed());
+            assertFalse("Connection should have closed", connection.isValid(5));
+            assertTrue("Expected to contain ClosedConnection, but was " + connection, connection.toString().contains("ClosedConnection"));
+        }
+    }
 
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
+    @Test
+    public void testEviction() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(5);
+        config.setConnectionTimeout(2500);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         try (Connection connection = ds.getConnection()) {
-            unwrap2 = connection.unwrap(Connection.class);
-            assertSame(unwrap, unwrap2);
-            assertSame("Second total connections not as expected", 1, pool.getTotalConnections());
-            assertSame("Second idle connections not as expected", 0, pool.getIdleConnections());
-         }
+        try (LightDataSource ds = new LightDataSource(config)) {
+            Connection connection = ds.getConnection();
 
-         UtilityElf.quietlySleep(800);
+            LightPool pool = TestElf.getPool(ds);
+            assertEquals(1, pool.getTotalConnections());
+            ds.evictConnection(connection);
+            assertEquals(0, pool.getTotalConnections());
+        }
+    }
 
-         try (Connection connection = ds.getConnection()) {
-            unwrap2 = connection.unwrap(Connection.class);
-            assertNotSame("Expected a different connection", unwrap, unwrap2);
-         }
+    @Test
+    public void testBackfill() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(4);
+        config.setConnectionTimeout(1000);
+        config.setInitializationFailTimeout(Long.MAX_VALUE);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         assertSame("Post total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Post idle connections not as expected", 1, pool.getIdleConnections());
-      } finally {
-         TestElf.setConfigUnitTest(false);
-      }
-   }
+        StubConnection.slowCreate = true;
+        try (LightDataSource ds = new LightDataSource(config)) {
 
-   @Test
-   public void testDoubleClose() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTimeout(2500);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      try (LightDataSource ds = new LightDataSource(config);
-           Connection connection = ds.getConnection()) {
-         connection.close();
-
-         // should no-op
-         connection.abort(null);
-
-         assertTrue("Connection should have closed", connection.isClosed());
-         assertFalse("Connection should have closed", connection.isValid(5));
-         assertTrue("Expected to contain ClosedConnection, but was " + connection, connection.toString().contains("ClosedConnection"));
-      }
-   }
-
-   @Test
-   public void testEviction() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(5);
-      config.setConnectionTimeout(2500);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      try (LightDataSource ds = new LightDataSource(config)) {
-         Connection connection = ds.getConnection();
-
-         LightPool pool = TestElf.getPool(ds);
-         assertEquals(1, pool.getTotalConnections());
-         ds.evictConnection(connection);
-         assertEquals(0, pool.getTotalConnections());
-      }
-   }
-
-   @Test
-   public void testBackfill() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(4);
-      config.setConnectionTimeout(1000);
-      config.setInitializationFailTimeout(Long.MAX_VALUE);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      StubConnection.slowCreate = true;
-      try (LightDataSource ds = new LightDataSource(config)) {
-
-         LightPool pool = TestElf.getPool(ds);
-         UtilityElf.quietlySleep(1250);
-
-         assertSame("Total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
-
-         // This will take the pool down to zero
-         try (Connection connection = ds.getConnection()) {
-            assertNotNull(connection);
+            LightPool pool = TestElf.getPool(ds);
+            UtilityElf.quietlySleep(1250);
 
             assertSame("Total connections not as expected", 1, pool.getTotalConnections());
-            assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
 
-            PreparedStatement statement = connection.prepareStatement("SELECT some, thing FROM somewhere WHERE something=?");
-            assertNotNull(statement);
+            // This will take the pool down to zero
+            try (Connection connection = ds.getConnection()) {
+                assertNotNull(connection);
 
-            ResultSet resultSet = statement.executeQuery();
-            assertNotNull(resultSet);
+                assertSame("Total connections not as expected", 1, pool.getTotalConnections());
+                assertSame("Idle connections not as expected", 0, pool.getIdleConnections());
 
-            try {
-               statement.getMaxFieldSize();
-               fail();
-            } catch (Exception e) {
-               assertSame(SQLException.class, e.getClass());
+                PreparedStatement statement = connection.prepareStatement("SELECT some, thing FROM somewhere WHERE something=?");
+                assertNotNull(statement);
+
+                ResultSet resultSet = statement.executeQuery();
+                assertNotNull(resultSet);
+
+                try {
+                    statement.getMaxFieldSize();
+                    fail();
+                } catch (Exception e) {
+                    assertSame(SQLException.class, e.getClass());
+                }
+
+                pool.logPoolState("testBackfill() before close...");
+
+                // The connection will be ejected from the pool here
             }
 
-            pool.logPoolState("testBackfill() before close...");
+            assertSame("Total connections not as expected", 0, pool.getTotalConnections());
 
-            // The connection will be ejected from the pool here
-         }
+            pool.logPoolState("testBackfill() after close...");
 
-         assertSame("Total connections not as expected", 0, pool.getTotalConnections());
+            UtilityElf.quietlySleep(1250);
 
-         pool.logPoolState("testBackfill() after close...");
+            assertSame("Total connections not as expected", 1, pool.getTotalConnections());
+            assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
+        } finally {
+            StubConnection.slowCreate = false;
+        }
+    }
 
-         UtilityElf.quietlySleep(1250);
+    @Test
+    public void testMaximumPoolLimit() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(4);
+        config.setConnectionTimeout(20000);
+        config.setInitializationFailTimeout(0);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         assertSame("Total connections not as expected", 1, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 1, pool.getIdleConnections());
-      } finally {
-         StubConnection.slowCreate = false;
-      }
-   }
+        final AtomicReference<Exception> ref = new AtomicReference<>();
 
-   @Test
-   public void testMaximumPoolLimit() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(4);
-      config.setConnectionTimeout(20000);
-      config.setInitializationFailTimeout(0);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+        StubConnection.count.set(0); // reset counter
 
-      final AtomicReference<Exception> ref = new AtomicReference<>();
+        try (final LightDataSource ds = new LightDataSource(config)) {
 
-      StubConnection.count.set(0); // reset counter
+            final LightPool pool = TestElf.getPool(ds);
 
-      try (final LightDataSource ds = new LightDataSource(config)) {
-
-         final LightPool pool = TestElf.getPool(ds);
-
-         Thread[] threads = new Thread[20];
-         for (int i = 0; i < threads.length; i++) {
-            threads[i] = new Thread(() -> {
-               try {
-                  pool.logPoolState("Before acquire ");
-                  try (Connection ignored = ds.getConnection()) {
-                     pool.logPoolState("After  acquire ");
-                     UtilityElf.quietlySleep(500);
-                  }
-               } catch (Exception e) {
-                  ref.set(e);
-               }
-            });
-         }
-
-         for (Thread thread : threads) {
-            thread.start();
-         }
-
-         for (Thread thread : threads) {
-            thread.join();
-         }
-
-         pool.logPoolState("before check ");
-         assertNull((ref.get() != null ? ref.get().toString() : ""), ref.get());
-         assertSame("StubConnection count not as expected", 4, StubConnection.count.get());
-      }
-   }
-
-   @Test
-   @SuppressWarnings("EmptyTryBlock")
-   public void testOldDriver() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(1);
-      config.setConnectionTimeout(2500);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      StubConnection.oldDriver = true;
-      StubStatement.oldDriver = true;
-      try (LightDataSource ds = new LightDataSource(config)) {
-         UtilityElf.quietlySleep(500);
-
-         try (Connection ignored = ds.getConnection()) {
-            // close
-         }
-
-         UtilityElf.quietlySleep(500);
-         try (Connection ignored = ds.getConnection()) {
-            // close
-         }
-      } finally {
-         StubConnection.oldDriver = false;
-         StubStatement.oldDriver = false;
-      }
-   }
-
-   @Test
-   public void testSuspendResume() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(3);
-      config.setMaximumPoolSize(3);
-      config.setConnectionTimeout(2500);
-      config.setAllowPoolSuspension(true);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      try (final LightDataSource ds = new LightDataSource(config)) {
-         LightPool pool = TestElf.getPool(ds);
-         while (pool.getTotalConnections() < 3) {
-            UtilityElf.quietlySleep(50);
-         }
-
-         Thread t = new Thread(() -> {
-            try {
-               ds.getConnection();
-               ds.getConnection();
-            } catch (Exception e) {
-               fail();
+            Thread[] threads = new Thread[20];
+            for (int i = 0; i < threads.length; i++) {
+                threads[i] = new Thread(() -> {
+                    try {
+                        pool.logPoolState("Before acquire ");
+                        try (Connection ignored = ds.getConnection()) {
+                            pool.logPoolState("After  acquire ");
+                            UtilityElf.quietlySleep(500);
+                        }
+                    } catch (Exception e) {
+                        ref.set(e);
+                    }
+                });
             }
-         });
 
-         try (Connection ignored = ds.getConnection()) {
-            assertEquals(2, pool.getIdleConnections());
+            for (Thread thread : threads) {
+                thread.start();
+            }
 
-            pool.suspendPool();
-            t.start();
+            for (Thread thread : threads) {
+                thread.join();
+            }
+
+            pool.logPoolState("before check ");
+            assertNull((ref.get() != null ? ref.get().toString() : ""), ref.get());
+            assertSame("StubConnection count not as expected", 4, StubConnection.count.get());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("EmptyTryBlock")
+    public void testOldDriver() throws Exception {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(1);
+        config.setConnectionTimeout(2500);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+
+        StubConnection.oldDriver = true;
+        StubStatement.oldDriver = true;
+        try (LightDataSource ds = new LightDataSource(config)) {
+            UtilityElf.quietlySleep(500);
+
+            try (Connection ignored = ds.getConnection()) {
+                // close
+            }
 
             UtilityElf.quietlySleep(500);
-            assertEquals(2, pool.getIdleConnections());
-         }
-         assertEquals(3, pool.getIdleConnections());
-         pool.resumePool();
-         UtilityElf.quietlySleep(500);
-         assertEquals(1, pool.getIdleConnections());
-      }
-   }
-
-   @Test
-   public void testSuspendResumeWithThrow() throws Exception {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(3);
-      config.setMaximumPoolSize(3);
-      config.setConnectionTimeout(2500);
-      config.setAllowPoolSuspension(true);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      System.setProperty("com.github.bingoohuang.mtcp.throwIfSuspended", "true");
-      try (final LightDataSource ds = new LightDataSource(config)) {
-         LightPool pool = TestElf.getPool(ds);
-         while (pool.getTotalConnections() < 3) {
-            UtilityElf.quietlySleep(50);
-         }
-
-         AtomicReference<Exception> exception = new AtomicReference<>();
-         Thread t = new Thread(() -> {
-            try {
-               ds.getConnection();
-               ds.getConnection();
-            } catch (Exception e) {
-               exception.set(e);
+            try (Connection ignored = ds.getConnection()) {
+                // close
             }
-         });
+        } finally {
+            StubConnection.oldDriver = false;
+            StubStatement.oldDriver = false;
+        }
+    }
 
-         try (Connection ignored = ds.getConnection()) {
-            assertEquals(2, pool.getIdleConnections());
+    @Test
+    public void testInitializationFailure1() {
+        StubDataSource stubDataSource = new StubDataSource();
+        stubDataSource.setThrowException(new SQLException("Connection refused"));
 
-            pool.suspendPool();
-            t.start();
+        try (LightDataSource ds = TestElf.newLightDataSource()) {
+            ds.setMinimumIdle(1);
+            ds.setMaximumPoolSize(1);
+            ds.setConnectionTimeout(2500);
+            ds.setConnectionTestQuery("VALUES 1");
+            ds.setDataSource(stubDataSource);
 
-            UtilityElf.quietlySleep(500);
-            assertEquals(SQLTransientException.class, exception.get().getClass());
-            assertEquals(2, pool.getIdleConnections());
-         }
+            try (Connection ignored = ds.getConnection()) {
+                fail("Initialization should have failed");
+            } catch (SQLException e) {
+                // passed
+            }
+        }
+    }
 
-         assertEquals(3, pool.getIdleConnections());
-         pool.resumePool();
+    @Test
+    public void testInitializationFailure2() throws SQLException {
+        StubDataSource stubDataSource = new StubDataSource();
+        stubDataSource.setThrowException(new SQLException("Connection refused"));
 
-         try (Connection ignored = ds.getConnection()) {
-            assertEquals(2, pool.getIdleConnections());
-         }
-      } finally {
-         System.getProperties().remove("com.github.bingoohuang.mtcp.throwIfSuspended");
-      }
-   }
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSource(stubDataSource);
 
-   @Test
-   public void testInitializationFailure1() {
-      StubDataSource stubDataSource = new StubDataSource();
-      stubDataSource.setThrowException(new SQLException("Connection refused"));
-
-      try (LightDataSource ds = TestElf.newLightDataSource()) {
-         ds.setMinimumIdle(1);
-         ds.setMaximumPoolSize(1);
-         ds.setConnectionTimeout(2500);
-         ds.setConnectionTestQuery("VALUES 1");
-         ds.setDataSource(stubDataSource);
-
-         try (Connection ignored = ds.getConnection()) {
+        try (LightDataSource ds = new LightDataSource(config);
+             Connection ignored = ds.getConnection()) {
             fail("Initialization should have failed");
-         } catch (SQLException e) {
+        } catch (PoolInitializationException e) {
             // passed
-         }
-      }
-   }
+        }
+    }
 
-   @Test
-   public void testInitializationFailure2() throws SQLException {
-      StubDataSource stubDataSource = new StubDataSource();
-      stubDataSource.setThrowException(new SQLException("Connection refused"));
+    @Test
+    public void testInvalidConnectionTestQuery() {
+        class BadConnection extends StubConnection {
+            /** {@inheritDoc} */
+            @Override
+            public Statement createStatement() throws SQLException {
+                throw new SQLException("Simulated exception in createStatement()");
+            }
+        }
 
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSource(stubDataSource);
+        StubDataSource stubDataSource = new StubDataSource() {
+            /** {@inheritDoc} */
+            @Override
+            public Connection getConnection() {
+                return new BadConnection();
+            }
+        };
 
-      try (LightDataSource ds = new LightDataSource(config);
-           Connection ignored = ds.getConnection()) {
-         fail("Initialization should have failed");
-      } catch (LightPool.PoolInitializationException e) {
-         // passed
-      }
-   }
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(2);
+        config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(3));
+        config.setConnectionTestQuery("VALUES 1");
+        config.setInitializationFailTimeout(TimeUnit.SECONDS.toMillis(2));
+        config.setDataSource(stubDataSource);
 
-   @Test
-   public void testInvalidConnectionTestQuery() {
-      class BadConnection extends StubConnection {
-         /** {@inheritDoc} */
-         @Override
-         public Statement createStatement() throws SQLException {
-            throw new SQLException("Simulated exception in createStatement()");
-         }
-      }
+        try (LightDataSource ds = new LightDataSource(config)) {
+            try (Connection ignored = ds.getConnection()) {
+                fail("getConnection() should have failed");
+            } catch (SQLException e) {
+                assertSame("Simulated exception in createStatement()", e.getNextException().getMessage());
+            }
+        } catch (PoolInitializationException e) {
+            assertSame("Simulated exception in createStatement()", e.getCause().getMessage());
+        }
 
-      StubDataSource stubDataSource = new StubDataSource() {
-         /** {@inheritDoc} */
-         @Override
-         public Connection getConnection() {
-            return new BadConnection();
-         }
-      };
+        config.setInitializationFailTimeout(0);
+        try (LightDataSource ignored = new LightDataSource(config)) {
+            fail("Initialization should have failed");
+        } catch (PoolInitializationException e) {
+            // passed
+        }
+    }
 
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(1);
-      config.setMaximumPoolSize(2);
-      config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(3));
-      config.setConnectionTestQuery("VALUES 1");
-      config.setInitializationFailTimeout(TimeUnit.SECONDS.toMillis(2));
-      config.setDataSource(stubDataSource);
+    @Test
+    public void testPopulationSlowAcquisition() throws InterruptedException, SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMaximumPoolSize(20);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-      try (LightDataSource ds = new LightDataSource(config)) {
-         try (Connection ignored = ds.getConnection()) {
-            fail("getConnection() should have failed");
-         } catch (SQLException e) {
-            assertSame("Simulated exception in createStatement()", e.getNextException().getMessage());
-         }
-      } catch (LightPool.PoolInitializationException e) {
-         assertSame("Simulated exception in createStatement()", e.getCause().getMessage());
-      }
+        System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
 
-      config.setInitializationFailTimeout(0);
-      try (LightDataSource ignored = new LightDataSource(config)) {
-         fail("Initialization should have failed");
-      } catch (LightPool.PoolInitializationException e) {
-         // passed
-      }
-   }
+        StubConnection.slowCreate = true;
+        try (LightDataSource ds = new LightDataSource(config)) {
+            System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
 
-   @Test
-   public void testPopulationSlowAcquisition() throws InterruptedException, SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMaximumPoolSize(20);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
+            TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
 
-      System.setProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs", "1000");
+            SECONDS.sleep(2);
 
-      StubConnection.slowCreate = true;
-      try (LightDataSource ds = new LightDataSource(config)) {
-         System.clearProperty("com.github.bingoohuang.mtcp.housekeeping.periodMs");
+            LightPool pool = TestElf.getPool(ds);
+            assertSame("Total connections not as expected", 2, pool.getTotalConnections());
+            assertSame("Idle connections not as expected", 2, pool.getIdleConnections());
 
-         TestElf.getUnsealedConfig(ds).setIdleTimeout(3000);
+            try (Connection connection = ds.getConnection()) {
+                assertNotNull(connection);
 
-         SECONDS.sleep(2);
+                SECONDS.sleep(20);
 
-         LightPool pool = TestElf.getPool(ds);
-         assertSame("Total connections not as expected", 2, pool.getTotalConnections());
-         assertSame("Idle connections not as expected", 2, pool.getIdleConnections());
+                assertSame("Second total connections not as expected", 20, pool.getTotalConnections());
+                assertSame("Second idle connections not as expected", 19, pool.getIdleConnections());
+            }
 
-         try (Connection connection = ds.getConnection()) {
-            assertNotNull(connection);
+            assertSame("Idle connections not as expected", 20, pool.getIdleConnections());
 
-            SECONDS.sleep(20);
+            SECONDS.sleep(5);
 
-            assertSame("Second total connections not as expected", 20, pool.getTotalConnections());
-            assertSame("Second idle connections not as expected", 19, pool.getIdleConnections());
-         }
+            assertSame("Third total connections not as expected", 20, pool.getTotalConnections());
+            assertSame("Third idle connections not as expected", 20, pool.getIdleConnections());
+        } finally {
+            StubConnection.slowCreate = false;
+        }
+    }
 
-         assertSame("Idle connections not as expected", 20, pool.getIdleConnections());
+    @Test
+    @SuppressWarnings("EmptyTryBlock")
+    public void testMinimumIdleZero() throws SQLException {
+        LightConfig config = TestElf.newLightConfig();
+        config.setMinimumIdle(0);
+        config.setMaximumPoolSize(5);
+        config.setConnectionTimeout(1000L);
+        config.setConnectionTestQuery("VALUES 1");
+        config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
-         SECONDS.sleep(5);
-
-         assertSame("Third total connections not as expected", 20, pool.getTotalConnections());
-         assertSame("Third idle connections not as expected", 20, pool.getIdleConnections());
-      } finally {
-         StubConnection.slowCreate = false;
-      }
-   }
-
-   @Test
-   @SuppressWarnings("EmptyTryBlock")
-   public void testMinimumIdleZero() throws SQLException {
-      LightConfig config = TestElf.newLightConfig();
-      config.setMinimumIdle(0);
-      config.setMaximumPoolSize(5);
-      config.setConnectionTimeout(1000L);
-      config.setConnectionTestQuery("VALUES 1");
-      config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-
-      try (LightDataSource ds = new LightDataSource(config);
-           Connection ignored = ds.getConnection()) {
-         // passed
-      } catch (SQLTransientConnectionException sqle) {
-         fail("Failed to obtain connection");
-      }
-   }
+        try (LightDataSource ds = new LightDataSource(config);
+             Connection ignored = ds.getConnection()) {
+            // passed
+        } catch (SQLTransientConnectionException sqle) {
+            fail("Failed to obtain connection");
+        }
+    }
 }
