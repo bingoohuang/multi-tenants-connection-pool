@@ -58,8 +58,10 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
     public volatile int poolState;
 
-    private final long ALIVE_BYPASS_WINDOW_MS = Long.getLong("com.github.bingoohuang.mtcp.aliveBypassWindowMs", MILLISECONDS.toMillis(500));
-    private final long HOUSEKEEPING_PERIOD_MS = Long.getLong("com.github.bingoohuang.mtcp.housekeeping.periodMs", SECONDS.toMillis(30));
+    private final long ALIVE_BYPASS_WINDOW_MS = Long.getLong(
+            "com.github.bingoohuang.mtcp.aliveBypassWindowMs", MILLISECONDS.toMillis(500));
+    private final long HOUSEKEEPING_PERIOD_MS = Long.getLong(
+            "com.github.bingoohuang.mtcp.housekeeping.periodMs", SECONDS.toMillis(30));
 
     private static final String EVICTED_CONNECTION_MESSAGE = "(connection was evicted)";
     private static final String DEAD_CONNECTION_MESSAGE = "(connection is dead)";
@@ -105,12 +107,15 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
         final LinkedBlockingQueue<Runnable> addConnectionQueue = new LinkedBlockingQueue<>(config.getMaximumPoolSize());
         this.addConnectionQueue = unmodifiableCollection(addConnectionQueue);
-        this.addConnectionExecutor = createThreadPoolExecutor(addConnectionQueue, poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
-        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(), poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
+        this.addConnectionExecutor = createThreadPoolExecutor(addConnectionQueue,
+                poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(),
+                poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
 
         this.leakTaskFactory = new ProxyLeakTaskFactory(config.getLeakDetectionThreshold(), houseKeepingExecutorService);
 
-        this.houseKeeperTask = houseKeepingExecutorService.scheduleWithFixedDelay(new HouseKeeper(), 100L, HOUSEKEEPING_PERIOD_MS, MILLISECONDS);
+        this.houseKeeperTask = houseKeepingExecutorService.scheduleWithFixedDelay(
+                new HouseKeeper(), 100L, HOUSEKEEPING_PERIOD_MS, MILLISECONDS);
     }
 
     /**
@@ -142,12 +147,16 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                 }
 
                 val now = ClockSource.currentTime();
-                if (poolEntry.isMarkedEvicted() || (ClockSource.elapsedMillis(poolEntry.lastAccessed, now) > ALIVE_BYPASS_WINDOW_MS && !isConnectionAlive(poolEntry.connection))) {
-                    closeConnection(poolEntry, poolEntry.isMarkedEvicted() ? EVICTED_CONNECTION_MESSAGE : DEAD_CONNECTION_MESSAGE);
+                if (poolEntry.isMarkedEvicted() || isEntryDead(poolEntry, now)) {
+                    val reason = poolEntry.isMarkedEvicted()
+                            ? EVICTED_CONNECTION_MESSAGE : DEAD_CONNECTION_MESSAGE;
+                    closeConnection(poolEntry, reason);
                     timeout = hardTimeout - ClockSource.elapsedMillis(startTime);
                 } else {
                     metricsTracker.recordBorrowStats(poolEntry, startTime);
-                    return poolEntry.createProxyConnection(leakTaskFactory.schedule(poolEntry), now);
+                    markTenantCode(poolEntry);
+                    val leakTask = leakTaskFactory.schedule(poolEntry);
+                    return poolEntry.createProxyConnection(leakTask, now);
                 }
             } while (timeout > 0L);
 
@@ -157,6 +166,18 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
             Thread.currentThread().interrupt();
             throw new SQLException(poolName + " - Interrupted during connection acquisition", e);
         }
+    }
+
+    private void markTenantCode(PoolEntry poolEntry) {
+        val tenantCodeAware = config.getTenantCodeAware();
+        if (tenantCodeAware != null) {
+            poolEntry.setTenantCode(tenantCodeAware.getTenantCode());
+        }
+    }
+
+    private boolean isEntryDead(PoolEntry poolEntry, long now) {
+        long elapsedMillis = ClockSource.elapsedMillis(poolEntry.lastAccessed, now);
+        return elapsedMillis > ALIVE_BYPASS_WINDOW_MS && !isConnectionAlive(poolEntry.connection);
     }
 
     /**
@@ -189,15 +210,17 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
             connectionBag.close();
 
-            val assassinExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(), poolName + " connection assassinator",
+            val assassinExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(),
+                    poolName + " connection assassinator",
                     config.getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
             try {
                 val start = ClockSource.currentTime();
+                val millis = SECONDS.toMillis(10);
                 do {
                     abortActiveConnections(assassinExecutor);
                     softEvictConnections();
                 }
-                while (getTotalConnections() > 0 && ClockSource.elapsedMillis(start) < SECONDS.toMillis(10));
+                while (getTotalConnections() > 0 && ClockSource.elapsedMillis(start) < millis);
             } finally {
                 assassinExecutor.shutdown();
                 assassinExecutor.awaitTermination(10L, SECONDS);
@@ -223,7 +246,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         proxyConnection.cancelLeakTask();
 
         try {
-            softEvictConnection(proxyConnection.getPoolEntry(), "(connection evicted by user)", !connection.isClosed() /* owner */);
+            softEvictConnection(proxyConnection.getPoolEntry(),
+                    "(connection evicted by user)", !connection.isClosed() /* owner */);
         } catch (SQLException e) {
             // unreachable in LightCP, but we're still forced to catch it
         }
@@ -236,9 +260,11 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      * @param metricRegistry the metrics registry instance to use
      */
     public void setMetricRegistry(Object metricRegistry) {
-        if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry, "com.codahale.metrics.MetricRegistry")) {
+        if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry,
+                "com.codahale.metrics.MetricRegistry")) {
             setMetricsTrackerFactory(new CodahaleMetricsTrackerFactory((MetricRegistry) metricRegistry));
-        } else if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry, "io.micrometer.core.instrument.MeterRegistry")) {
+        } else if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry,
+                "io.micrometer.core.instrument.MeterRegistry")) {
             setMetricsTrackerFactory(new MicrometerMetricsTrackerFactory((MeterRegistry) metricRegistry));
         } else {
             setMetricsTrackerFactory(null);
@@ -252,7 +278,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      */
     public void setMetricsTrackerFactory(MetricsTrackerFactory metricsTrackerFactory) {
         if (metricsTrackerFactory != null) {
-            this.metricsTracker = new MetricsTrackerDelegate(metricsTrackerFactory.create(config.getPoolName(), getPoolStats()));
+            val tracker = metricsTrackerFactory.create(config.getPoolName(), getPoolStats());
+            this.metricsTracker = new MetricsTrackerDelegate(tracker);
         } else {
             this.metricsTracker = new NopMetricsTrackerDelegate();
         }
@@ -444,7 +471,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
             try {
                 connection.abort(assassinExecutor);
             } catch (Throwable e) {
-                quietlyCloseConnection(connection, "(connection aborted during shutdown)");
+                quietlyCloseConnection(connection,
+                        "(connection aborted during shutdown)");
             } finally {
                 connectionBag.remove(poolEntry);
             }
@@ -476,7 +504,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                     connectionBag.add(poolEntry);
                     log.debug("{} - Added connection {}", poolName, poolEntry.connection);
                 } else {
-                    quietlyCloseConnection(poolEntry.close(), "(initialization check complete and minimumIdle is zero)");
+                    quietlyCloseConnection(poolEntry.close(),
+                            "(initialization check complete and minimumIdle is zero)");
                 }
 
                 return;
@@ -538,7 +567,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      */
     private ScheduledExecutorService initializeHouseKeepingExecutorService() {
         if (config.getScheduledExecutor() == null) {
-            val threadFactory = Optional.ofNullable(config.getThreadFactory()).orElse(new UtilityElf.DefaultThreadFactory(poolName + " housekeeper", true));
+            val threadFactory = Optional.ofNullable(config.getThreadFactory())
+                    .orElse(new UtilityElf.DefaultThreadFactory(poolName + " housekeeper", true));
             val executor = new ScheduledThreadPoolExecutor(1, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
             executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
             executor.setRemoveOnCancelPolicy(true);
@@ -595,7 +625,9 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         if (originalException instanceof SQLException) {
             sqlState = ((SQLException) originalException).getSQLState();
         }
-        val connectionException = new SQLTransientConnectionException(poolName + " - Connection is not available, request timed out after " + ClockSource.elapsedMillis(startTime) + "ms.", sqlState, originalException);
+        val connectionException = new SQLTransientConnectionException(poolName +
+                " - Connection is not available, request timed out after "
+                + ClockSource.elapsedMillis(startTime) + "ms.", sqlState, originalException);
         if (originalException instanceof SQLException) {
             connectionException.setNextException((SQLException) originalException);
         }
@@ -687,7 +719,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                     return;
                 } else if (now > ClockSource.plusMillis(previous, (3 * HOUSEKEEPING_PERIOD_MS) / 2)) {
                     // No point evicting for forward clock motion, this merely accelerates connection retirement anyway
-                    log.warn("{} - Thread starvation or clock leap detected (housekeeper delta={}).", poolName, ClockSource.elapsedDisplayString(previous, now));
+                    log.warn("{} - Thread starvation or clock leap detected (housekeeper delta={}).",
+                            poolName, ClockSource.elapsedDisplayString(previous, now));
                 }
 
                 previous = now;
