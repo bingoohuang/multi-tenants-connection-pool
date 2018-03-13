@@ -26,7 +26,6 @@ import com.github.bingoohuang.mtcp.metrics.PoolStats;
 import com.github.bingoohuang.mtcp.metrics.dropwizard.CodahaleHealthChecker;
 import com.github.bingoohuang.mtcp.metrics.dropwizard.CodahaleMetricsTrackerFactory;
 import com.github.bingoohuang.mtcp.metrics.micrometer.MicrometerMetricsTrackerFactory;
-import com.github.bingoohuang.mtcp.util.BagWaiter;
 import com.github.bingoohuang.mtcp.util.ClockSource;
 import com.github.bingoohuang.mtcp.util.ConcurrentBag;
 import com.github.bingoohuang.mtcp.util.UtilityElf;
@@ -39,7 +38,6 @@ import java.sql.SQLException;
 import java.sql.SQLTransientConnectionException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.*;
 
 import static com.github.bingoohuang.mtcp.util.UtilityElf.createThreadPoolExecutor;
@@ -87,7 +85,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     public LightPool(final LightConfig config) {
         super(config);
 
-        this.connectionBag = new ConcurrentBag<>(this, config.getTenantCodeAware());
+        this.connectionBag = new ConcurrentBag<>(this);
 
         this.houseKeepingExecutorService = initializeHouseKeepingExecutorService();
 
@@ -617,7 +615,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         @Override
         public Boolean call() {
             long sleepBackoff = 250L;
-            BagWaiter bagWaiter = connectionBag.getBagWaiter();
             while (poolState == POOL_NORMAL && shouldCreateAnotherConnection()) {
                 val poolEntry = createPoolEntry();
                 if (poolEntry != null) {
