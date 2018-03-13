@@ -114,7 +114,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
                         listener.addBagItem(bagWaiting.getWaiting() - 1);
                     }
 
-                    bagEntry.setTenantCode(bagWaiter.getWaitingTenantCode());
+                    bagEntry.setTenantCode(tenantCode);
                     return bagEntry;
                 }
             }
@@ -130,7 +130,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
                 }
 
                 if (bagEntry.stateFreeToUsing()) {
-                    bagEntry.setTenantCode(bagWaiter.getWaitingTenantCode());
+                    bagEntry.setTenantCode(tenantCode);
                     return bagEntry;
                 }
 
@@ -139,7 +139,7 @@ public class ConcurrentBag<T extends BagEntry> implements AutoCloseable {
 
             return null;
         } finally {
-            bagWaiter.decrementWaiting(bagWaiting);
+            bagWaiter.decrementWaiting();
 
         }
     }

@@ -6,9 +6,10 @@ import lombok.val;
 
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
+import static java.util.concurrent.atomic.AtomicIntegerFieldUpdater.newUpdater;
+
 public class BagEntry {
-    private static final AtomicIntegerFieldUpdater<BagEntry> stateUpdater
-            = AtomicIntegerFieldUpdater.newUpdater(BagEntry.class, "state");
+    private static final AtomicIntegerFieldUpdater<BagEntry> stateUpdater = newUpdater(BagEntry.class, "state");
     private volatile int state;
 
     @Getter @Setter private volatile String tenantCode;
