@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sureFireOptions9/>
         <sureFireForks9>false</sureFireForks9>
         <artifact.classifier/>
@@ -26,6 +25,12 @@
         <commons.csv.version>1.5</commons.csv.version>
         <h2.version>1.4.196</h2.version>
         <junit.version>4.12</junit.version>
+
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
     <groupId>com.github.bingoohuang</groupId>
@@ -284,19 +289,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgs>-Xlint</compilerArgs>
-                </configuration>
-            </plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
