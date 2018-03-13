@@ -12,7 +12,7 @@ public class BagEntry {
     private static final AtomicIntegerFieldUpdater<BagEntry> stateUpdater = newUpdater(BagEntry.class, "state");
     private volatile int state;
 
-    @Getter @Setter private volatile String tenantCode;
+    @Getter @Setter private volatile String tenantId;
 
     public BagEntry() {
     }
@@ -54,7 +54,7 @@ public class BagEntry {
 
     public final void stateToFree() {
         setState(State.STATE_FREE);
-        setTenantCode(null);
+        setTenantId(null);
     }
 
     public final boolean isStateFree() {

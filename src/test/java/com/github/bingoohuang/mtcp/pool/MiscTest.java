@@ -70,8 +70,8 @@ public class MiscTest {
         try {
             UtilityElf.createInstance("invalid", null);
             fail();
-        } catch (RuntimeException e) {
-            assertTrue(e.getCause() instanceof ClassNotFoundException);
+        } catch (Exception e) {
+            assertTrue(e instanceof ClassNotFoundException);
         }
     }
 

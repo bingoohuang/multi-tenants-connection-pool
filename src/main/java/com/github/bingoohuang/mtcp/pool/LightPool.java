@@ -167,7 +167,10 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         if (tenantEnvAware == null) return;
 
         val tenantEnv = tenantEnvAware.getTenantEnvironment();
-        entry.setTenantCode(tenantEnv.getTcode());
+        val tid = tenantEnv.getTenantId();
+        entry.setTenantId(tid);
+
+        if (tid == null) return;
 
         val switchDbSql = tenantEnv.getSwitchDbSql();
         if (switchDbSql == null) return;

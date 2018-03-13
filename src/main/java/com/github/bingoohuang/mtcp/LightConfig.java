@@ -68,6 +68,8 @@ public class LightConfig implements LightConfigMXBean {
     private volatile int minIdle;
     private volatile String username;
     private volatile String password;
+
+    private String tenantEnvironmentAwareClassName;
     private TenantEnvironmentAware tenantEnvironmentAware;
 
     // Properties NOT changeable at runtime
@@ -168,6 +170,15 @@ public class LightConfig implements LightConfigMXBean {
         } else {
             this.connectionTimeout = connectionTimeoutMs;
         }
+    }
+
+    public String getTenantEnvironmentAwareClassName() {
+        return tenantEnvironmentAwareClassName;
+    }
+
+    public void setTenantEnvironmentAwareClassName(String tenantEnvironmentAwareClassName) {
+        this.tenantEnvironmentAwareClassName = tenantEnvironmentAwareClassName;
+        this.tenantEnvironmentAware = UtilityElf.createInstance(tenantEnvironmentAwareClassName, TenantEnvironmentAware.class);
     }
 
     public void setTenantEnvironmentAware(TenantEnvironmentAware tenantEnvironmentAware) {
