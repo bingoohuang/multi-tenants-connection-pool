@@ -52,30 +52,16 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @author Brett Wooldridge
  */
 @Slf4j
-public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener {
-    public static final int POOL_NORMAL = 0;
-    public static final int POOL_SHUTDOWN = 2;
-
+public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener, LightPoolConstants {
     public volatile int poolState;
-
-    private final long ALIVE_BYPASS_WINDOW_MS = Long.getLong(
-            "com.github.bingoohuang.mtcp.aliveBypassWindowMs", MILLISECONDS.toMillis(500));
-    private final long HOUSEKEEPING_PERIOD_MS = Long.getLong(
-            "com.github.bingoohuang.mtcp.housekeeping.periodMs", SECONDS.toMillis(30));
-
-    private static final String EVICTED_CONNECTION_MESSAGE = "(connection was evicted)";
-    private static final String DEAD_CONNECTION_MESSAGE = "(connection is dead)";
 
     private final PoolEntryCreator POOL_ENTRY_CREATOR = new PoolEntryCreator();
     private final PoolEntryCreator POST_POOL_ENTRY_CREATOR = new PostPoolEntryCreator("After adding ");
     private final Collection<Runnable> addConnectionQueue;
     private final ThreadPoolExecutor addConnectionExecutor;
     private final ThreadPoolExecutor closeConnectionExecutor;
-
     private final ConcurrentBag<PoolEntry> connectionBag;
-
     private final ProxyLeakTaskFactory leakTaskFactory;
-
     private final ScheduledExecutorService houseKeepingExecutorService;
     private ScheduledFuture<?> houseKeeperTask;
 
