@@ -68,7 +68,7 @@ public class LightConfig implements LightConfigMXBean {
     private volatile int minIdle;
     private volatile String username;
     private volatile String password;
-    private TenantCodeAware tenantCodeAware;
+    private TenantEnvironmentAware tenantEnvironmentAware;
 
     // Properties NOT changeable at runtime
     //
@@ -170,12 +170,12 @@ public class LightConfig implements LightConfigMXBean {
         }
     }
 
-    public void setTenantCodeAware(TenantCodeAware tenantCodeAware) {
-        this.tenantCodeAware = tenantCodeAware;
+    public void setTenantEnvironmentAware(TenantEnvironmentAware tenantEnvironmentAware) {
+        this.tenantEnvironmentAware = tenantEnvironmentAware;
     }
 
-    public TenantCodeAware getTenantCodeAware() {
-        return this.tenantCodeAware;
+    public TenantEnvironmentAware getTenantEnvironmentAware() {
+        return this.tenantEnvironmentAware;
     }
 
     /**

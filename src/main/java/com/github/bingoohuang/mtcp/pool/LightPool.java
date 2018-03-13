@@ -52,7 +52,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @author Brett Wooldridge
  */
 @Slf4j
-public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener, LightPoolConstants {
+public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener {
+    public static final int POOL_NORMAL = 0;
+    public static final int POOL_SHUTDOWN = 2;
     public volatile int poolState;
 
     private final long ALIVE_BYPASS_WINDOW_MS = Long.getLong("com.github.bingoohuang.mtcp.aliveBypassWindowMs", MILLISECONDS.toMillis(500));
@@ -160,15 +162,23 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         }
     }
 
-    private void markTenantCode(PoolEntry poolEntry) {
-        val tenantCodeAware = config.getTenantCodeAware();
-        if (tenantCodeAware != null) {
-            poolEntry.setTenantCode(tenantCodeAware.getTenantCode());
+    private void markTenantCode(PoolEntry entry) throws SQLException {
+        val tenantEnvAware = config.getTenantEnvironmentAware();
+        if (tenantEnvAware == null) return;
+
+        val tenantEnv = tenantEnvAware.getTenantEnvironment();
+        entry.setTenantCode(tenantEnv.getTcode());
+
+        val switchDbSql = tenantEnv.getSwitchDbSql();
+        if (switchDbSql == null) return;
+
+        try (val statement = entry.connection.createStatement()) {
+            statement.execute(switchDbSql);
         }
     }
 
     private boolean isEntryDead(PoolEntry poolEntry, long now) {
-        long elapsedMillis = ClockSource.elapsedMillis(poolEntry.lastAccessed, now);
+        val elapsedMillis = ClockSource.elapsedMillis(poolEntry.lastAccessed, now);
         return elapsedMillis > ALIVE_BYPASS_WINDOW_MS && !isConnectionAlive(poolEntry.connection);
     }
 
@@ -476,7 +486,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      * @see LightConfig#setInitializationFailTimeout(long)
      */
     private void checkFailFast(LightConfig config) {
-        if (config.getTenantCodeAware() != null) {
+        if (config.getTenantEnvironmentAware() != null) {
             return; // ignore when multi-tenants environment is setup
         }
 
