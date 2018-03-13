@@ -55,10 +55,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public final class LightPool extends PoolBase implements LightPoolMXBean, ConcurrentBag.BagStateListener, LightPoolConstants {
     public volatile int poolState;
 
-<<<<<<< HEAD
-    private final PoolEntryCreator POOL_ENTRY_CREATOR = new PoolEntryCreator();
-    private final PoolEntryCreator POST_POOL_ENTRY_CREATOR = new PostPoolEntryCreator("After adding ");
-=======
     private final long ALIVE_BYPASS_WINDOW_MS = Long.getLong("com.github.bingoohuang.mtcp.aliveBypassWindowMs", MILLISECONDS.toMillis(500));
     private final long HOUSEKEEPING_PERIOD_MS = Long.getLong("com.github.bingoohuang.mtcp.housekeeping.periodMs", SECONDS.toMillis(30));
 
@@ -67,7 +63,6 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
     private final PoolEntryCreator POOL_ENTRY_CREATOR = new PoolEntryCreator(null /*logging prefix*/);
     private final PoolEntryCreator POST_FILL_POOL_ENTRY_CREATOR = new PoolEntryCreator("After adding ");
->>>>>>> parent of ebebafc... refactor code
     private final Collection<Runnable> addConnectionQueue;
     private final ThreadPoolExecutor addConnectionExecutor;
     private final ThreadPoolExecutor closeConnectionExecutor;
