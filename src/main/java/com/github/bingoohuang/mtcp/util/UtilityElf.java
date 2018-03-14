@@ -37,6 +37,13 @@ public final class UtilityElf {
      */
     private static final int SQL_SERVER_SNAPSHOT_ISOLATION_LEVEL = 4096;
 
+
+    public static boolean objectEquals(Object a, Object b) {
+        if (a == null && b == null ) return true;
+        if (a != null && a.equals(b)) return true;
+        return false;
+    }
+
     /**
      * @return null if string is null or empty
      */
