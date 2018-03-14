@@ -8,6 +8,6 @@ public class MyTenantEnvironment implements TenantEnvironmentAware {
     @Override public TenantEnvironment getTenantEnvironment() {
         val tenantId = MyTenantContext.getTenantId();
         return new TenantEnvironment(tenantId,
-                "UPDATE T_CURRENT_TENANT SET TENANT_ID = '" + tenantId + "'");
+                "INSERT INTO T_CURRENT_TENANT(TENANT_ID) VALUES('" + tenantId + "')");
     }
 }

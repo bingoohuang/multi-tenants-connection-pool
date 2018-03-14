@@ -26,7 +26,6 @@ public class TenantPoolTest {
         try (val conn = ds.getConnection();
              val stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE TABLE T_CURRENT_TENANT(TENANT_ID VARCHAR(128))");
-            stmt.executeUpdate("INSERT INTO T_CURRENT_TENANT(TENANT_ID) VALUES('UNSET')");
         }
     }
 
@@ -59,7 +58,7 @@ public class TenantPoolTest {
         MyTenantContext.setTenantId(tenantCode);
         try (val conn = ds.getConnection();
              val stmt = conn.createStatement();
-             val rs = stmt.executeQuery("SELECT TENANT_ID FROM T_CURRENT_TENANT")) {
+             val rs = stmt.executeQuery("SELECT TENANT_ID FROM T_CURRENT_TENANT WHERE TENANT_ID = '" + tenantCode + "'")) {
             assertTrue(rs.next());
             assertEquals(rs.getString(1), tenantCode);
             assertFalse(rs.next());
