@@ -1,12 +1,12 @@
 language: java
-install: mvn install -DskipTests -Dgpg.skip
+install: mvn install -DskipTests -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
 jdk:
 - oraclejdk8
 sudo: false
 cache:
   directories:
-  - $HOME/.m2/repository
-  - $HOME/.sonar/cache
+  - "$HOME/.m2/repository"
+  - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
     organization: bingoohuang-github
@@ -14,3 +14,6 @@ addons:
       secure: Q0b81ebLGrl8/lhQVwnPz+yOWMYqsI3QK4PjwPT8GPmbA47cs8oHiZDTm40mAb5lUvd1jkcMhmnG35ywIKoQswnkvCJdSYfSdmajXVALKB5I6sVSILec3TtZVfzahIScXi3C0wvUg8X0av9bj7L5qqi76sxGfAeSw/qp9/HCHtnB/H/98LIoCqf5pfqaSfGQP0i7JRq99U/9hFSdQ4cXJi7P1OD3LTcvfCL83XGSVoWydh8eSVDqRzsV7zZEPPpE7MNoMCgwot3SJashK7zYaMIU+9ML1mW31ncujHkF+zIBEELtU9aaymhPZSqeAqtTT+JCBdq8tgEx3Ikt2dWs38iq9bSaIP3bLMRpfEEh1ylBo6+eo8Oq3aVnfzWvdYfehcEKftUj3ePSBbO+CMWFddWOeFd7GWCBSE4RDE2tsvyBdefbsH0Nm5fy4U7HgEWMvzVz5FQTUIFvxgW67gL9U/HFBlPQfH1+oVV3+sbCpxv/jbAHiqMkB7UKNV6i+2mTpQH180JTO36J3fvKOKHPhRmvZ+AmbT5ehXrlb9qk7xZvEsXK5JogXYRX5bYB5Vqd+IJLFx5BFxkZoftgH2wz9ZpwBi090lOJrPq+sjW8qCpBS/lqvap4Y6ZoeQLg7sjmTIqLb4CN4EGlf39Z0YREfyXLxlcnbmajOhgly+X4hhE=
 script:
 - mvn clean test jacoco:report coveralls:report install sonar:sonar -Dgpg.skip -Dsonar.organization=bingoohuang-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=a7fe683637d6e1f54e194817cc36e78936d4fe61
+env:
+  global:
+    secure: VvAS4W1AS7W6lJ4NjdI5kfqJydt2p0cBLF8WJpO1CGThajrOfIyqRf3L8B1vhNc7n8NHAMQ4IasWOA5CuzKijTsx4a9Ex1XPUhNLba5k5nRNgJ51jVsDbPD7w9T2DviQ7Tkds6Odg7FUagismcbHUtWsZxh8sjoqJrWWFbeJVxlLO+1vEPs+57kNCnveum+lw5kVanhwFVm8vgYzXfWnDr97AQhD3hLarW/3YKsHODsMSZtFBCjJeEEkjLN1+PEeP04jjvy+5p/MwArb20/+5kAGpyUYpYc+53a5ghNJ4A8rzRH0ukeylHXa/0CNXA2HynAdVuAL7E++wvHjC3zgoASlWqGdPs8dpGHxZmUdIJDJAgQNi1h8+jXXFjtMoyrPan9JdDdLsDW1Usq99zEEey4z+ROAiu/WzUgHonRhyy77QQ7zsZnbyrVDiuEkchGdQIvxD2aNl2nq+OKWaVESc1amrYwbt30Mki86SwaAMKdRmNPC4uTqW9CFZWfw7kPuKiAPv5n0aY7qHtCSN9rd++WsPbs3403stsEuJS8M7Wx6JwCJKseQArmQC2bBUZSw1A7rSyjKL+bcSsaqs+Mu3UR6DGUJ1aUXtI7PqfI1BCRrfdPx5WyEk5HvSllMYfXdO9d/egRowvjkbnjxr1fwnGZppked0Auirg/7hvCdGv4=
