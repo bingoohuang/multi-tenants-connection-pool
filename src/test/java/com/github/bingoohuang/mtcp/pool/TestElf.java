@@ -131,7 +131,7 @@ public final class TestElf {
             poolName = callerStackTrace.getClassName();
         }
 
-        final LightConfig config = new LightConfig();
+        val config = new LightConfig();
         config.setPoolName(poolName);
         return config;
     }

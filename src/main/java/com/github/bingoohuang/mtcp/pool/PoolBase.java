@@ -99,7 +99,7 @@ abstract class PoolBase {
     //                           JDBC methods
     // ***********************************************************************
 
-    void quietlyCloseConnection(final Connection connection, final String closureReason) {
+    void quietlyClose(final Connection connection, final String closureReason) {
         if (connection != null) {
             try {
                 log.debug("{} - Closing connection {}: {}", poolName, connection, closureReason);
@@ -334,7 +334,7 @@ abstract class PoolBase {
             return connection;
         } catch (Exception e) {
             if (connection != null) {
-                quietlyCloseConnection(connection, "(Failed to create/setup connection)");
+                quietlyClose(connection, "(Failed to create/setup connection)");
             } else if (getLastConnectionFailure() == null) {
                 log.debug("{} - Failed to create/setup connection: {}", poolName, e.getMessage());
             }

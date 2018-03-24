@@ -5,6 +5,7 @@ import com.github.bingoohuang.mtcp.LightDataSource;
 import com.github.bingoohuang.mtcp.mocks.StubConnection;
 import com.github.bingoohuang.mtcp.util.UtilityElf;
 import io.prometheus.client.CollectorRegistry;
+import lombok.val;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -16,13 +17,13 @@ import static org.junit.Assert.assertThat;
 public class LightCPCollectorTest {
     @Test
     public void noConnection() {
-        LightConfig config = newLightConfig();
+        val config = newLightConfig();
         config.setMinIdle(0);
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
         StubConnection.slowCreate = true;
-        try (LightDataSource ds = new LightDataSource(config)) {
+        try (val ds = new LightDataSource(config)) {
             assertThat(getValue("lightcp_active_connections", "noConnection"), is(0.0));
             assertThat(getValue("lightcp_idle_connections", "noConnection"), is(0.0));
             assertThat(getValue("lightcp_pending_threads", "noConnection"), is(0.0));
@@ -53,13 +54,13 @@ public class LightCPCollectorTest {
 
     @Test
     public void connection1() throws Exception {
-        LightConfig config = newLightConfig();
+        val config = newLightConfig();
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
         config.setMaxPoolSize(1);
 
         StubConnection.slowCreate = true;
-        try (LightDataSource ds = new LightDataSource(config);
+        try (val ds = new LightDataSource(config);
              Connection connection1 = ds.getConnection()) {
 
             UtilityElf.quietlySleep(1000);
@@ -75,13 +76,13 @@ public class LightCPCollectorTest {
 
     @Test
     public void connectionClosed() throws Exception {
-        LightConfig config = newLightConfig();
+        val config = newLightConfig();
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
         config.setMaxPoolSize(1);
 
         StubConnection.slowCreate = true;
-        try (LightDataSource ds = new LightDataSource(config)) {
+        try (val ds = new LightDataSource(config)) {
             try (Connection connection1 = ds.getConnection()) {
                 // close immediately
             }

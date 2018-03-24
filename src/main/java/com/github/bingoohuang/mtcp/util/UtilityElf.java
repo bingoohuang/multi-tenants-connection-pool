@@ -23,8 +23,7 @@ public final class UtilityElf {
 
 
     public static boolean objectEquals(Object a, Object b) {
-        if (a == null && b == null) return true;
-        return a != null && a.equals(b);
+        return a == null && b == null || a != null && a.equals(b);
     }
 
     /**
@@ -56,6 +55,8 @@ public final class UtilityElf {
      * @return true if object is assignable from the type, false otherwise or when the class cannot be loaded
      */
     public static boolean safeIsAssignableFrom(Object obj, String className) {
+        if (obj == null) return false;
+
         try {
             Class<?> clazz = Class.forName(className);
             return clazz.isAssignableFrom(obj.getClass());

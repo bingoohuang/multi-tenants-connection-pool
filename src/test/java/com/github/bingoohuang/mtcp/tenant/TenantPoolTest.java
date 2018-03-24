@@ -54,13 +54,13 @@ public class TenantPoolTest {
         }
     }
 
-    private void checkTenant(String tenantCode) throws SQLException {
-        MyTenantContext.setTenantId(tenantCode);
+    private void checkTenant(String tenantId) throws SQLException {
+        MyTenantContext.setTenantId(tenantId);
         try (val conn = ds.getConnection();
              val stmt = conn.createStatement();
-             val rs = stmt.executeQuery("SELECT TENANT_ID FROM T_CURRENT_TENANT WHERE TENANT_ID = '" + tenantCode + "'")) {
+             val rs = stmt.executeQuery("SELECT TENANT_ID FROM T_CURRENT_TENANT WHERE TENANT_ID = '" + tenantId + "'")) {
             assertTrue(rs.next());
-            assertEquals(rs.getString(1), tenantCode);
+            assertEquals(rs.getString(1), tenantId);
             assertFalse(rs.next());
         } finally {
             MyTenantContext.clearTenantId();
@@ -68,7 +68,7 @@ public class TenantPoolTest {
     }
 
     private static LightConfig createH2LightConfig() {
-        LightConfig config = TestElf.newLightConfig();
+        val config = TestElf.newLightConfig();
         config.setMinIdle(1);
         config.setMaxPoolSize(2);
         config.setConnectionTestQuery("SELECT 1");

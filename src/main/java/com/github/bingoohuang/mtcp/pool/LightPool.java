@@ -85,10 +85,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
         final LinkedBlockingQueue<Runnable> addConnectionQueue = new LinkedBlockingQueue<>(config.getMaxPoolSize());
         this.addConnectionQueue = unmodifiableCollection(addConnectionQueue);
-        this.addConnectionExecutor = createThreadPoolExecutor(addConnectionQueue,
-                poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
-        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaxPoolSize(),
-                poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
+        this.addConnectionExecutor = createThreadPoolExecutor(addConnectionQueue, poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
+        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaxPoolSize(), poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
 
         this.leakTaskFactory = new ProxyLeakTaskFactory(config.getLeakDetectionThreshold(), houseKeepingExecutorService);
 
@@ -126,8 +124,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
                 val now = ClockSource.currentTime();
                 if (poolEntry.isMarkedEvicted() || isEntryDead(poolEntry, now)) {
-                    val reason = poolEntry.isMarkedEvicted()
-                            ? EVICTED_CONNECTION_MESSAGE : DEAD_CONNECTION_MESSAGE;
+                    val reason = poolEntry.isMarkedEvicted() ? EVICTED_CONNECTION_MESSAGE : DEAD_CONNECTION_MESSAGE;
                     closeConnection(poolEntry, reason);
                     timeout = hardTimeout - ClockSource.elapsedMillis(startTime);
                 } else {
@@ -194,8 +191,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
             connectionBag.close();
 
-            val assassinExecutor = createThreadPoolExecutor(config.getMaxPoolSize(),
-                    poolName + " connection assassinator",
+            val assassinExecutor = createThreadPoolExecutor(config.getMaxPoolSize(), poolName + " connection assassinator",
                     config.getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
             try {
                 val start = ClockSource.currentTime();
@@ -230,8 +226,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         proxyConnection.cancelLeakTask();
 
         try {
-            softEvictConnection(proxyConnection.getPoolEntry(),
-                    "(connection evicted by user)", !connection.isClosed() /* owner */);
+            softEvictConnection(proxyConnection.getPoolEntry(), "(connection evicted by user)", !connection.isClosed() /* owner */);
         } catch (SQLException e) {
             // unreachable in LightCP, but we're still forced to catch it
         }
@@ -244,11 +239,9 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      * @param metricRegistry the metrics registry instance to use
      */
     public void setMetricRegistry(Object metricRegistry) {
-        if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry,
-                "com.codahale.metrics.MetricRegistry")) {
+        if (UtilityElf.safeIsAssignableFrom(metricRegistry, "com.codahale.metrics.MetricRegistry")) {
             setMetricsTrackerFactory(new CodahaleMetricsTrackerFactory((MetricRegistry) metricRegistry));
-        } else if (metricRegistry != null && UtilityElf.safeIsAssignableFrom(metricRegistry,
-                "io.micrometer.core.instrument.MeterRegistry")) {
+        } else if (UtilityElf.safeIsAssignableFrom(metricRegistry, "io.micrometer.core.instrument.MeterRegistry")) {
             setMetricsTrackerFactory(new MicrometerMetricsTrackerFactory((MeterRegistry) metricRegistry));
         } else {
             setMetricsTrackerFactory(null);
@@ -380,7 +373,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         if (connectionBag.remove(poolEntry)) {
             val connection = poolEntry.close();
             closeConnectionExecutor.execute(() -> {
-                quietlyCloseConnection(connection, closureReason);
+                quietlyClose(connection, closureReason);
                 if (poolState == POOL_NORMAL) {
                     fillPool();
                 }
@@ -435,9 +428,9 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
     private synchronized void fillPool() {
         int a = config.getMaxPoolSize() - getTotalConnections();
         int b = config.getMinIdle() - getIdleConnections();
-        val connectionsToAdd = Math.min(a, b) - addConnectionQueue.size();
-        for (int i = 0; i < connectionsToAdd; i++) {
-            addConnectionExecutor.submit((i < connectionsToAdd - 1) ? POOL_ENTRY_CREATOR : POST_FILL_POOL_ENTRY_CREATOR);
+
+        for (int i = 0, ii = Math.min(a, b) - addConnectionQueue.size(); i < ii; i++) {
+            addConnectionExecutor.submit((i < ii - 1) ? POOL_ENTRY_CREATOR : POST_FILL_POOL_ENTRY_CREATOR);
         }
     }
 
@@ -452,8 +445,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
             try {
                 connection.abort(assassinExecutor);
             } catch (Throwable e) {
-                quietlyCloseConnection(connection,
-                        "(connection aborted during shutdown)");
+                quietlyClose(connection, "(connection aborted during shutdown)");
             } finally {
                 connectionBag.remove(poolEntry);
             }
@@ -485,8 +477,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                     connectionBag.add(poolEntry);
                     log.debug("{} - Added connection {}", poolName, poolEntry.connection);
                 } else {
-                    quietlyCloseConnection(poolEntry.close(),
-                            "(initialization check complete and minimumIdle is zero)");
+                    quietlyClose(poolEntry.close(), "(initialization check complete and minimumIdle is zero)");
                 }
 
                 return;
