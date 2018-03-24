@@ -515,10 +515,8 @@ abstract class PoolBase {
 
     private void createNetworkTimeoutExecutor(final DataSource dataSource, final String dsClassName, final String jdbcUrl) {
         // Temporary hack for MySQL issue: http://bugs.mysql.com/bug.php?id=75615
-        if ((dsClassName != null && dsClassName.contains("Mysql")) ||
-                (jdbcUrl != null && jdbcUrl.contains("mysql")) ||
-                (dataSource != null && dataSource.getClass().getName().contains("Mysql"))) {
-            netTimeoutExecutor = new SynchronousExecutor();
+        if (isMySQL(dataSource, dsClassName, jdbcUrl)) {
+            netTimeoutExecutor = SameThreadExecutor.INSTANCE;
         } else {
             ThreadFactory threadFactory = config.getThreadFactory();
             threadFactory = threadFactory != null ? threadFactory : new UtilityElf.DefaultThreadFactory(poolName + " network timeout executor", true);
@@ -527,6 +525,12 @@ abstract class PoolBase {
             executor.allowCoreThreadTimeOut(true);
             netTimeoutExecutor = executor;
         }
+    }
+
+    private boolean isMySQL(DataSource dataSource, String dsClassName, String jdbcUrl) {
+        return dsClassName != null && dsClassName.contains("Mysql")
+                || jdbcUrl != null && jdbcUrl.contains("mysql")
+                || dataSource != null && dataSource.getClass().getName().contains("Mysql");
     }
 
     /**

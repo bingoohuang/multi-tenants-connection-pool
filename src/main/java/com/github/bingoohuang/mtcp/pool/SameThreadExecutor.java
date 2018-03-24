@@ -9,7 +9,9 @@ import java.util.concurrent.Executor;
  * MySQL issue: http://bugs.mysql.com/bug.php?id=75615
  */
 @Slf4j
-public class SynchronousExecutor implements Executor {
+public class SameThreadExecutor implements Executor {
+    public static final Executor INSTANCE = new SameThreadExecutor();
+
     /**
      * {@inheritDoc}
      */
@@ -19,6 +21,7 @@ public class SynchronousExecutor implements Executor {
             command.run();
         } catch (Throwable t) {
             log.debug("Failed to execute: {}", command, t);
+            throw t;
         }
     }
 }

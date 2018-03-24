@@ -3,14 +3,15 @@ package com.github.bingoohuang.mtcp.metrics.dropwizard;
 import com.codahale.metrics.*;
 import com.github.bingoohuang.mtcp.metrics.MetricsTracker;
 import com.github.bingoohuang.mtcp.metrics.PoolStats;
+import lombok.Getter;
 
 import java.util.concurrent.TimeUnit;
 
 public final class CodaHaleMetricsTracker implements MetricsTracker {
     private final String poolName;
-    private final Timer connectionObtainTimer;
-    private final Histogram connectionUsage;
-    private final Histogram connectionCreation;
+    @Getter private final Timer connectionObtainTimer;
+    @Getter private final Histogram connectionUsage;
+    @Getter private final Histogram connectionCreation;
     private final Meter connectionTimeoutMeter;
     private final MetricRegistry registry;
 
@@ -33,36 +34,16 @@ public final class CodaHaleMetricsTracker implements MetricsTracker {
         this.connectionTimeoutMeter = registry.meter(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_TIMEOUT_RATE));
 
         registry.register(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_TOTAL_CONNECTIONS),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return poolStats.getTotalConnections();
-                    }
-                });
+                (Gauge<Integer>) () -> poolStats.getTotalConnections());
 
         registry.register(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_IDLE_CONNECTIONS),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return poolStats.getIdleConnections();
-                    }
-                });
+                (Gauge<Integer>) () -> poolStats.getIdleConnections());
 
         registry.register(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_ACTIVE_CONNECTIONS),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return poolStats.getActiveConnections();
-                    }
-                });
+                (Gauge<Integer>) () -> poolStats.getActiveConnections());
 
         registry.register(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_PENDING_CONNECTIONS),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return poolStats.getPendingThreads();
-                    }
-                });
+                (Gauge<Integer>) () -> poolStats.getPendingThreads());
     }
 
     /**
@@ -104,17 +85,5 @@ public final class CodaHaleMetricsTracker implements MetricsTracker {
     @Override
     public void recordConnectionCreatedMillis(long connectionCreatedMillis) {
         connectionCreation.update(connectionCreatedMillis);
-    }
-
-    public Timer getConnectionAcquisitionTimer() {
-        return connectionObtainTimer;
-    }
-
-    public Histogram getConnectionDurationHistogram() {
-        return connectionUsage;
-    }
-
-    public Histogram getConnectionCreationHistogram() {
-        return connectionCreation;
     }
 }
