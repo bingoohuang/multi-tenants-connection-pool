@@ -6,4 +6,6 @@ public interface TenantEnvironmentAware {
     String getTenantId();
 
     void switchTenantDatabase(Connection connection);
+
+    void tagActive(String connectionName);
 }

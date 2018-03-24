@@ -132,7 +132,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
                     val leakTask = leakTaskFactory.schedule(poolEntry);
                     val proxyConnection = poolEntry.createProxyConnection(leakTask, now);
-                    markTenantCode(poolEntry, proxyConnection);
+                    markTenantCode(poolEntry);
 
                     return proxyConnection;
                 }
@@ -146,7 +146,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         }
     }
 
-    private void markTenantCode(PoolEntry entry, LightProxyConnection proxyConnection) {
+    private void markTenantCode(PoolEntry entry) {
         val tenantEnvAware = config.getTenantEnvironmentAware();
         if (tenantEnvAware == null) return;
 
@@ -156,6 +156,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         if (!tidSame) entry.setTenantId(tid);
         if (tidSame) return;
 
+        tenantEnvAware.tagActive(tid + "-" + entry.getConnectionSeq());
         tenantEnvAware.switchTenantDatabase(entry.connection);
     }
 

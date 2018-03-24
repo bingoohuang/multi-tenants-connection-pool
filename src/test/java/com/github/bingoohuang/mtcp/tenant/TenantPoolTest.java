@@ -62,6 +62,7 @@ public class TenantPoolTest {
             assertTrue(rs.next());
             assertEquals(rs.getString(1), tenantId);
             assertFalse(rs.next());
+
         } finally {
             MyTenantContext.clearTenantId();
         }

@@ -3,6 +3,7 @@ package com.github.bingoohuang.mtcp.pool;
 import com.github.bingoohuang.mtcp.util.BagEntry;
 import com.github.bingoohuang.mtcp.util.ClockSource;
 import com.github.bingoohuang.mtcp.util.FastList;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -28,18 +29,21 @@ import java.util.concurrent.ScheduledFuture;
     private volatile ScheduledFuture<?> endOfLife;
 
     private final FastList<Statement> openStatements;
-    private final PoolBase lightPool;
+    private final PoolBase pool;
 
     private final boolean isReadOnly;
     private final boolean isAutoCommit;
 
-    PoolEntry(Connection connection, PoolBase pool, boolean isReadOnly, boolean isAutoCommit) {
+    @Getter private final int connectionSeq;
+
+    PoolEntry(Connection connection, PoolBase pool, boolean isReadOnly, boolean isAutoCommit,  int connectionSeq) {
         this.connection = connection;
-        this.lightPool = pool;
+        this.pool = pool;
         this.isReadOnly = isReadOnly;
         this.isAutoCommit = isAutoCommit;
         this.lastAccessed = ClockSource.currentTime();
         this.openStatements = new FastList<>(Statement.class, 16);
+        this.connectionSeq  = connectionSeq;
     }
 
     /**
@@ -50,7 +54,7 @@ import java.util.concurrent.ScheduledFuture;
     void recycle(long lastAccessed) {
         if (connection != null) {
             this.lastAccessed = lastAccessed;
-            lightPool.recycle(this);
+            pool.recycle(this);
         }
     }
 
@@ -68,11 +72,11 @@ import java.util.concurrent.ScheduledFuture;
     }
 
     void resetConnectionState(final ProxyConnection proxyConnection, final int dirtyBits) throws SQLException {
-        lightPool.resetConnectionState(connection, proxyConnection, dirtyBits);
+        pool.resetConnectionState(connection, proxyConnection, dirtyBits);
     }
 
     String getPoolName() {
-        return lightPool.toString();
+        return pool.toString();
     }
 
     boolean isMarkedEvicted() {
@@ -84,7 +88,7 @@ import java.util.concurrent.ScheduledFuture;
     }
 
     void evict(final String closureReason) {
-        lightPool.closeConnection(this, closureReason);
+        pool.closeConnection(this, closureReason);
     }
 
     /**

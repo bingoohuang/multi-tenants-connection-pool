@@ -22,6 +22,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.bingoohuang.mtcp.pool.ProxyConnection.*;
@@ -59,6 +60,9 @@ abstract class PoolBase {
     private final AtomicReference<Throwable> lastConnectionFailure;
 
     private volatile boolean isValidChecked;
+
+    private final AtomicInteger connectionSeq = new AtomicInteger();
+
 
     PoolBase(final LightConfig config) {
         this.config = config;
@@ -161,7 +165,7 @@ abstract class PoolBase {
     //                         PoolEntry methods
     // ***********************************************************************
     PoolEntry newPoolEntry() throws Exception {
-        return new PoolEntry(newConnection(), this, isReadOnly, isAutoCommit);
+        return new PoolEntry(newConnection(), this, isReadOnly, isAutoCommit, connectionSeq.incrementAndGet());
     }
 
     void resetConnectionState(final Connection connection, final ProxyConnection proxyConnection, final int dirtyBits) throws SQLException {

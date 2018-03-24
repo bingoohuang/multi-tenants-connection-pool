@@ -21,4 +21,13 @@ public class MyTenantEnvironment implements TenantEnvironmentAware {
             statement.execute("INSERT INTO T_CURRENT_TENANT(TENANT_ID) VALUES('" + tenantId + "')");
         }
     }
+
+//    Jedis jedis = new Jedis();
+//    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @Override public void tagActive(final String connectionName) {
+//        executor.submit(() -> {
+//            jedis.zadd("mtcp", System.currentTimeMillis(), connectionName);
+//        });
+    }
 }
