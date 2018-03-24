@@ -61,7 +61,7 @@ public class JdbcDriverTest {
     }
 
     @Test
-    public void driverTest2() throws SQLException {
+    public void driverTest2() {
         LightConfig config = TestElf.newLightConfig();
 
         config.setMinimumIdle(1);

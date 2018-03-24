@@ -80,7 +80,7 @@ public class StubStatement implements Statement {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws SQLException {
+    public void close() {
         closed = true;
     }
 
@@ -390,7 +390,7 @@ public class StubStatement implements Statement {
      * {@inheritDoc}
      */
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return closed;
     }
 

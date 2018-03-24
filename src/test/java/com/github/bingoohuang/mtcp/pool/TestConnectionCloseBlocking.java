@@ -45,7 +45,7 @@ public class TestConnectionCloseBlocking {
     private static volatile boolean shouldFail = false;
 
     // @Test
-    public void testConnectionCloseBlocking() throws SQLException {
+    public void testConnectionCloseBlocking() {
         LightConfig config = TestElf.newLightConfig();
         config.setMinimumIdle(0);
         config.setMaximumPoolSize(1);

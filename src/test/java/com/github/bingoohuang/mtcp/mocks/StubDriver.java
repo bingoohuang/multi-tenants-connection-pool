@@ -39,7 +39,7 @@ public class StubDriver implements Driver {
      * {@inheritDoc}
      */
     @Override
-    public Connection connect(String url, Properties info) throws SQLException {
+    public Connection connect(String url, Properties info) {
         return new StubConnection();
     }
 
@@ -47,7 +47,7 @@ public class StubDriver implements Driver {
      * {@inheritDoc}
      */
     @Override
-    public boolean acceptsURL(String url) throws SQLException {
+    public boolean acceptsURL(String url) {
         return "jdbc:stub".equals(url);
     }
 
@@ -55,7 +55,7 @@ public class StubDriver implements Driver {
      * {@inheritDoc}
      */
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) {
         return null;
     }
 
@@ -86,7 +86,7 @@ public class StubDriver implements Driver {
     /**
      * {@inheritDoc}
      */
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() {
         return null;
     }
 }

@@ -79,13 +79,13 @@ public class TestPropertySetter {
     }
 
     @Test
-    public void testGetPropertyNames() throws Exception {
+    public void testGetPropertyNames() {
         Set<String> propertyNames = PropertyElf.getPropertyNames(LightConfig.class);
         assertTrue(propertyNames.contains("dataSourceClassName"));
     }
 
     @Test
-    public void testSetNonExistantPropertyName() throws Exception {
+    public void testSetNonExistantPropertyName() {
         try {
             Properties props = new Properties();
             props.put("what", "happened");

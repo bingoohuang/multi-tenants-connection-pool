@@ -54,7 +54,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testShutdown1() throws SQLException {
+    public void testShutdown1() {
         Assert.assertSame("StubConnection count not as expected", 0, StubConnection.count.get());
 
         StubConnection.slowCreate = true;
@@ -102,7 +102,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testShutdown2() throws SQLException {
+    public void testShutdown2() {
         assertSame("StubConnection count not as expected", 0, StubConnection.count.get());
 
         StubConnection.slowCreate = true;
@@ -131,7 +131,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testShutdown3() throws SQLException {
+    public void testShutdown3() {
         assertSame("StubConnection count not as expected", 0, StubConnection.count.get());
 
         StubConnection.slowCreate = false;
@@ -159,7 +159,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testShutdown4() throws SQLException {
+    public void testShutdown4() {
         StubConnection.slowCreate = true;
 
         LightConfig config = TestElf.newLightConfig();
@@ -213,7 +213,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testAfterShutdown() throws Exception {
+    public void testAfterShutdown() {
         LightConfig config = TestElf.newLightConfig();
         config.setMinimumIdle(0);
         config.setMaximumPoolSize(5);
@@ -232,7 +232,7 @@ public class ShutdownTest {
     }
 
     @Test
-    public void testShutdownDuringInit() throws Exception {
+    public void testShutdownDuringInit() {
         final LightConfig config = TestElf.newLightConfig();
         config.setMinimumIdle(5);
         config.setMaximumPoolSize(5);

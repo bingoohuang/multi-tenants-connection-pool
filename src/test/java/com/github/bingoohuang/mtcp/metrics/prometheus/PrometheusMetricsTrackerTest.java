@@ -81,7 +81,7 @@ public class PrometheusMetricsTrackerTest {
     }
 
     @Test
-    public void testMultiplePoolName() throws Exception {
+    public void testMultiplePoolName() {
         String[] labelNames = {POOL_LABEL_NAME};
 
         LightConfig config = newLightConfig();

@@ -162,23 +162,17 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         }
     }
 
-    private void markTenantCode(PoolEntry entry) throws SQLException {
+    private void markTenantCode(PoolEntry entry) {
         val tenantEnvAware = config.getTenantEnvironmentAware();
         if (tenantEnvAware == null) return;
 
-        val tenantEnv = tenantEnvAware.getTenantEnvironment();
-        val tid = tenantEnv.getTenantId();
+        val tid = tenantEnvAware.getTenantId();
         val prevTid = entry.getTenantId();
         val tidSame = UtilityElf.objectEquals(tid, prevTid);
         if (!tidSame) entry.setTenantId(tid);
         if (tidSame) return;
 
-        val switchDbSql = tenantEnv.getSwitchDbSql();
-        if (switchDbSql == null) return;
-
-        try (val statement = entry.connection.createStatement()) {
-            statement.execute(switchDbSql);
-        }
+        tenantEnvAware.switchTenantDatabase(entry.connection);
     }
 
     private boolean isEntryDead(PoolEntry poolEntry, long now) {

@@ -38,7 +38,7 @@ public class HouseKeeperCleanupTest {
     private ScheduledThreadPoolExecutor executor;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         ThreadFactory threadFactory = new UtilityElf.DefaultThreadFactory("global housekeeper", true);
 
         executor = new ScheduledThreadPoolExecutor(1, threadFactory, new ThreadPoolExecutor.DiscardPolicy());
@@ -47,7 +47,7 @@ public class HouseKeeperCleanupTest {
     }
 
     @Test
-    public void testHouseKeeperCleanupWithCustomExecutor() throws Exception {
+    public void testHouseKeeperCleanupWithCustomExecutor() {
         LightConfig config = TestElf.newLightConfig();
         config.setMinimumIdle(0);
         config.setMaximumPoolSize(10);

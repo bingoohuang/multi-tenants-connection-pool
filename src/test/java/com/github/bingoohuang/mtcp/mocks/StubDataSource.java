@@ -60,7 +60,7 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public PrintWriter getLogWriter() throws SQLException {
+    public PrintWriter getLogWriter() {
         return logWriter;
     }
 
@@ -68,7 +68,7 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    public void setLogWriter(PrintWriter out) {
         this.logWriter = out;
     }
 
@@ -76,7 +76,7 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
+    public void setLoginTimeout(int seconds) {
         this.loginTimeout = seconds;
     }
 
@@ -84,14 +84,14 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public int getLoginTimeout() throws SQLException {
+    public int getLoginTimeout() {
         return loginTimeout;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() {
         return null;
     }
 
@@ -112,7 +112,7 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(Class<?> iface) {
         return false;
     }
 
@@ -135,7 +135,7 @@ public class StubDataSource implements DataSource {
      * {@inheritDoc}
      */
     @Override
-    public Connection getConnection(String username, String password) throws SQLException {
+    public Connection getConnection(String username, String password) {
         return new StubConnection();
     }
 

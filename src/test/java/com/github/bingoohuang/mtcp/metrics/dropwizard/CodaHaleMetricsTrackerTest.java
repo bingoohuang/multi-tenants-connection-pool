@@ -23,7 +23,7 @@ public class CodaHaleMetricsTrackerTest {
     }
 
     @Test
-    public void close() throws Exception {
+    public void close() {
         testee.close();
 
         verify(mockMetricRegistry).remove("mypool.pool.Wait");

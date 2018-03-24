@@ -99,7 +99,7 @@ public class MockDataSource implements DataSource {
         when(mockConnection.prepareStatement(anyString(), anyInt(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
         doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
+            public Void answer(InvocationOnMock invocation) {
                 return null;
             }
         }).doNothing().when(mockPreparedStatement).setInt(anyInt(), anyInt());

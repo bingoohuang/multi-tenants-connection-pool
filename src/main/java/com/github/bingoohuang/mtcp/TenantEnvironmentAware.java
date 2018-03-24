@@ -1,5 +1,9 @@
 package com.github.bingoohuang.mtcp;
 
+import java.sql.Connection;
+
 public interface TenantEnvironmentAware {
-    TenantEnvironment getTenantEnvironment();
+    String getTenantId();
+
+    void switchTenantDatabase(Connection connection);
 }

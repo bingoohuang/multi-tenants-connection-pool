@@ -91,7 +91,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public String nativeSQL(String sql) throws SQLException {
+    public String nativeSQL(String sql) {
         return null;
     }
 
@@ -110,7 +110,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public boolean getAutoCommit() throws SQLException {
+    public boolean getAutoCommit() {
         return autoCommit;
     }
 
@@ -118,7 +118,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void commit() throws SQLException {
+    public void commit() {
 
     }
 
@@ -126,7 +126,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void rollback() throws SQLException {
+    public void rollback() {
 
     }
 
@@ -134,7 +134,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws SQLException {
+    public void close() {
 
     }
 
@@ -153,7 +153,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public DatabaseMetaData getMetaData() throws SQLException {
+    public DatabaseMetaData getMetaData() {
         return null;
     }
 
@@ -193,7 +193,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public String getCatalog() throws SQLException {
+    public String getCatalog() {
         return catalog;
     }
 
@@ -212,7 +212,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public int getTransactionIsolation() throws SQLException {
+    public int getTransactionIsolation() {
         return isolation;
     }
 
@@ -220,7 +220,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public SQLWarning getWarnings() throws SQLException {
+    public SQLWarning getWarnings() {
         return null;
     }
 
@@ -271,7 +271,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Class<?>> getTypeMap() throws SQLException {
+    public Map<String, Class<?>> getTypeMap() {
         return null;
     }
 
@@ -279,21 +279,21 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+    public void setTypeMap(Map<String, Class<?>> map) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setHoldability(int holdability) throws SQLException {
+    public void setHoldability(int holdability) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int getHoldability() throws SQLException {
+    public int getHoldability() {
         return (int) foo;
     }
 
@@ -301,7 +301,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Savepoint setSavepoint() throws SQLException {
+    public Savepoint setSavepoint() {
         return null;
     }
 
@@ -309,7 +309,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
+    public Savepoint setSavepoint(String name) {
         return null;
     }
 
@@ -317,14 +317,14 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
+    public void rollback(Savepoint savepoint) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+    public void releaseSavepoint(Savepoint savepoint) {
     }
 
     /**
@@ -397,7 +397,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Clob createClob() throws SQLException {
+    public Clob createClob() {
         return null;
     }
 
@@ -405,7 +405,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Blob createBlob() throws SQLException {
+    public Blob createBlob() {
         return null;
     }
 
@@ -413,7 +413,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public NClob createNClob() throws SQLException {
+    public NClob createNClob() {
         return null;
     }
 
@@ -421,7 +421,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public SQLXML createSQLXML() throws SQLException {
+    public SQLXML createSQLXML() {
         return null;
     }
 
@@ -440,21 +440,21 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public void setClientInfo(String name, String value) throws SQLClientInfoException {
+    public void setClientInfo(String name, String value) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+    public void setClientInfo(Properties properties) {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getClientInfo(String name) throws SQLException {
+    public String getClientInfo(String name) {
         return null;
     }
 
@@ -462,7 +462,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Properties getClientInfo() throws SQLException {
+    public Properties getClientInfo() {
         return null;
     }
 
@@ -470,7 +470,7 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+    public Array createArrayOf(String typeName, Object[] elements) {
         return null;
     }
 
@@ -478,20 +478,20 @@ public class StubConnection extends StubBaseConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+    public Struct createStruct(String typeName, Object[] attributes) {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setSchema(String schema) throws SQLException {
+    public void setSchema(String schema) {
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getSchema() throws SQLException {
+    public String getSchema() {
         return null;
     }
 
@@ -505,13 +505,13 @@ public class StubConnection extends StubBaseConnection implements Connection {
     /**
      * {@inheritDoc}
      */
-    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+    public void setNetworkTimeout(Executor executor, int milliseconds) {
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getNetworkTimeout() throws SQLException {
+    public int getNetworkTimeout() {
         if (oldDriver) {
             throw new AbstractMethodError();
         }

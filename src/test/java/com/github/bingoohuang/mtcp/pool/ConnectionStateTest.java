@@ -72,7 +72,7 @@ public class ConnectionStateTest {
     }
 
     @Test
-    public void testIsolation() throws Exception {
+    public void testIsolation() {
         LightConfig config = TestElf.newLightConfig();
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
         config.setTransactionIsolation("TRANSACTION_REPEATABLE_READ");

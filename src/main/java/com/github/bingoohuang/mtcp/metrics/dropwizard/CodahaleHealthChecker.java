@@ -94,7 +94,7 @@ public final class CodahaleHealthChecker {
          * {@inheritDoc}
          */
         @Override
-        protected Result check() throws Exception {
+        protected Result check() {
             try (Connection connection = pool.getConnection(checkTimeoutMs)) {
                 return Result.healthy();
             } catch (SQLException e) {
@@ -116,7 +116,7 @@ public final class CodahaleHealthChecker {
          * {@inheritDoc}
          */
         @Override
-        protected Result check() throws Exception {
+        protected Result check() {
             final long the99thPercentile = TimeUnit.NANOSECONDS.toMillis(Math.round(waitTimer.getSnapshot().get99thPercentile()));
             return the99thPercentile <= expected99thPercentile ? Result.healthy() : Result.unhealthy("99th percentile connection wait time of %dms exceeds the threshold %dms", the99thPercentile, expected99thPercentile);
         }

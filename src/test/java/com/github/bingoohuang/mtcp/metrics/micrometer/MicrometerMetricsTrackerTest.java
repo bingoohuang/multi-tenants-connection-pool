@@ -24,7 +24,7 @@ public class MicrometerMetricsTrackerTest {
     }
 
     @Test
-    public void close() throws Exception {
+    public void close() {
         Assert.assertNotNull(mockMeterRegistry.find("Wait"));
         Assert.assertNotNull(mockMeterRegistry.find("Usage"));
         Assert.assertNotNull(mockMeterRegistry.find("ConnectionCreation"));

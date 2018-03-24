@@ -45,27 +45,23 @@ public final class ProxyFactory {
      * @return a proxy that wraps the specified {@link Connection}
      */
     static ProxyConnection getProxyConnection(final PoolEntry poolEntry, final Connection connection, final FastList<Statement> openStatements, final ProxyLeakTask leakTask, final long now, final boolean isReadOnly, final boolean isAutoCommit) {
-        // Body is replaced (injected) by JavassistProxyFactory
-        throw new IllegalStateException("You need to run the CLI build and you need target/classes in your classpath to run.");
+        return new LightProxyConnection(poolEntry, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
     }
 
     static Statement getProxyStatement(final ProxyConnection connection, final Statement statement) {
-        // Body is replaced (injected) by JavassistProxyFactory
-        throw new IllegalStateException("You need to run the CLI build and you need target/classes in your classpath to run.");
+        return new LightProxyStatement(connection, statement);
     }
 
     static CallableStatement getProxyCallableStatement(final ProxyConnection connection, final CallableStatement statement) {
-        // Body is replaced (injected) by JavassistProxyFactory
-        throw new IllegalStateException("You need to run the CLI build and you need target/classes in your classpath to run.");
+        return new LightProxyCallableStatement(connection, statement);
     }
 
     static PreparedStatement getProxyPreparedStatement(final ProxyConnection connection, final PreparedStatement statement) {
-        // Body is replaced (injected) by JavassistProxyFactory
-        throw new IllegalStateException("You need to run the CLI build and you need target/classes in your classpath to run.");
+        return new LightProxyPreparedStatement(connection, statement);
     }
 
     static ResultSet getProxyResultSet(final ProxyConnection connection, final ProxyStatement statement, final ResultSet resultSet) {
         // Body is replaced (injected) by JavassistProxyFactory
-        throw new IllegalStateException("You need to run the CLI build and you need target/classes in your classpath to run.");
+        return new LightProxyResultSet(connection, statement, resultSet);
     }
 }
