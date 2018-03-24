@@ -1,5 +1,6 @@
 package com.github.bingoohuang.mtcp.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -7,36 +8,12 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Slf4j
+@Slf4j @UtilityClass
 public class DriverElf {
-    public static String getDriverClassName(String rawUrl) {
-        if (rawUrl == null) {
-            return null;
-        }
-
-        if (rawUrl.startsWith("jdbc:oracle:") //
-                || rawUrl.startsWith("JDBC:oracle:")) {
-            return "oracle.jdbc.OracleDriver";
-        } else if (rawUrl.startsWith("jdbc:mysql:")) {
-            return "com.mysql.jdbc.Driver";
-        } else if (rawUrl.startsWith("jdbc:h2:")) {
-            return "org.h2.Driver";
-        } else {
-            throw new RuntimeException("unknown jdbc driver : " + rawUrl);
-        }
-    }
-
-    public static Driver createDriver(String jdbcUrl, String driverClassName) {
+    public Driver createDriver(String jdbcUrl, String driverClassName) {
         Driver driver = null;
         if (driverClassName != null) {
-            val drivers = DriverManager.getDrivers();
-            while (drivers.hasMoreElements()) {
-                val d = drivers.nextElement();
-                if (d.getClass().getName().equals(driverClassName)) {
-                    driver = d;
-                    break;
-                }
-            }
+            driver = findDriver(driverClassName);
 
             if (driver == null) {
                 log.warn("Registered driver with driverClassName={} was not found, trying direct instantiation.", driverClassName);
@@ -54,8 +31,18 @@ public class DriverElf {
         return checkJdbcUrlAccepts(jdbcUrl, driverClassName, driver);
     }
 
-    public static Class<?> loadDriverClass(String driverClassName,
-                                           boolean logError) {
+    private static Driver findDriver(String driverClassName) {
+        val drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            val d = drivers.nextElement();
+            if (d.getClass().getName().equals(driverClassName)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public Class<?> loadDriverClass(String driverClassName, boolean logError) {
         Class<?> driverClass = null;
         val classLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -85,8 +72,7 @@ public class DriverElf {
         return driverClass;
     }
 
-    private static Driver checkJdbcUrlAccepts(String jdbcUrl, String
-            driverClassName, Driver driver) {
+    private Driver checkJdbcUrlAccepts(String jdbcUrl, String driverClassName, Driver driver) {
         try {
             if (driver == null) {
                 return DriverManager.getDriver(jdbcUrl);
