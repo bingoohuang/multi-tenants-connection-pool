@@ -187,4 +187,18 @@ public final class UtilityElf {
             return thread;
         }
     }
+
+
+    private static final char[] ID_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+    public static String createRandomPoolName(String prefix) {
+        val random = ThreadLocalRandom.current();
+        val buf = new StringBuilder(prefix);
+
+        for (int i = 0; i < 4; i++) {
+            buf.append(ID_CHARACTERS[random.nextInt(62)]);
+        }
+
+        return buf.toString();
+    }
 }

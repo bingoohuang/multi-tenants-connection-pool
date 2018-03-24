@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.github.bingoohuang.mtcp.util.DriverElf.loadDriverClass;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -34,7 +33,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @SuppressWarnings({"SameParameterValue", "unused"})
 @Slf4j
 public class LightConfig implements LightConfigMXBean {
-    private static final char[] ID_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private static final long CONNECTION_TIMEOUT = SECONDS.toMillis(30);
     private static final long VALIDATION_TIMEOUT = SECONDS.toMillis(5);
     private static final long IDLE_TIMEOUT = MINUTES.toMillis(10);
@@ -913,18 +911,12 @@ public class LightConfig implements LightConfigMXBean {
         } catch (AccessControlException e) {
             // The SecurityManager didn't allow us to read/write system properties
             // so just generate a random pool number instead
-            val random = ThreadLocalRandom.current();
-            val buf = new StringBuilder(prefix);
-
-            for (int i = 0; i < 4; i++) {
-                buf.append(ID_CHARACTERS[random.nextInt(62)]);
-            }
-
-            log.info("assigned random pool name '{}' (security manager prevented access to system properties)", buf);
-
-            return buf.toString();
+            val poolName = UtilityElf.createRandomPoolName(prefix);
+            log.info("assigned random pool name '{}' (security manager prevented access to system properties)", poolName);
+            return poolName;
         }
     }
+
 
     private Object getObjectOrPerformJndiLookup(Object object) {
         if (object instanceof String) {
