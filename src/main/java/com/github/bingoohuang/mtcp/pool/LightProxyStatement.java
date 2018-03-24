@@ -3,7 +3,7 @@ package com.github.bingoohuang.mtcp.pool;
 
 import java.sql.*;
 
-public class LightProxyStatement extends ProxyStatement implements Statement, AutoCloseable, Wrapper {
+public class LightProxyStatement extends ProxyStatement {
     public ResultSet executeQuery(String var1) throws SQLException {
         try {
             return super.executeQuery(var1);

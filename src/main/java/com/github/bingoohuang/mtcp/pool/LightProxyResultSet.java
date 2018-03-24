@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
-public class LightProxyResultSet extends ProxyResultSet implements ResultSet, AutoCloseable, Wrapper {
+public class LightProxyResultSet extends ProxyResultSet {
     public boolean next() throws SQLException {
         try {
             return super.delegate.next();

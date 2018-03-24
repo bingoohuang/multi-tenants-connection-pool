@@ -10,12 +10,7 @@ import java.sql.*;
  *
  * @author Brett Wooldridge
  */
-@SuppressWarnings("unused")
 public final class ProxyFactory {
-    private ProxyFactory() {
-        // unconstructable
-    }
-
     /**
      * Create a proxy for the specified {@link Connection} instance.
      *
@@ -28,24 +23,23 @@ public final class ProxyFactory {
      * @param isAutoCommit   the default autoCommit state of the connection
      * @return a proxy that wraps the specified {@link Connection}
      */
-    static ProxyConnection getProxyConnection(final PoolEntry poolEntry, final Connection connection, final FastList<Statement> openStatements, final ProxyLeakTask leakTask, final long now, final boolean isReadOnly, final boolean isAutoCommit) {
+    static LightProxyConnection getProxyConnection(final PoolEntry poolEntry, final Connection connection, final FastList<Statement> openStatements, final ProxyLeakTask leakTask, final long now, final boolean isReadOnly, final boolean isAutoCommit) {
         return new LightProxyConnection(poolEntry, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
     }
 
-    static Statement getProxyStatement(final ProxyConnection connection, final Statement statement) {
+    static LightProxyStatement getProxyStatement(final ProxyConnection connection, final Statement statement) {
         return new LightProxyStatement(connection, statement);
     }
 
-    static CallableStatement getProxyCallableStatement(final ProxyConnection connection, final CallableStatement statement) {
+    static LightProxyCallableStatement getProxyCallableStatement(final ProxyConnection connection, final CallableStatement statement) {
         return new LightProxyCallableStatement(connection, statement);
     }
 
-    static PreparedStatement getProxyPreparedStatement(final ProxyConnection connection, final PreparedStatement statement) {
+    static LightProxyPreparedStatement getProxyPreparedStatement(final ProxyConnection connection, final PreparedStatement statement) {
         return new LightProxyPreparedStatement(connection, statement);
     }
 
-    static ResultSet getProxyResultSet(final ProxyConnection connection, final ProxyStatement statement, final ResultSet resultSet) {
-        // Body is replaced (injected) by JavassistProxyFactory
+    static LightProxyResultSet getProxyResultSet(final ProxyConnection connection, final ProxyStatement statement, final ResultSet resultSet) {
         return new LightProxyResultSet(connection, statement, resultSet);
     }
 }

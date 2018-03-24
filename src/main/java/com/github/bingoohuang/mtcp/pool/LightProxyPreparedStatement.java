@@ -8,7 +8,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 
-public class LightProxyPreparedStatement extends ProxyPreparedStatement implements PreparedStatement, Statement, AutoCloseable, Wrapper {
+public class LightProxyPreparedStatement extends ProxyPreparedStatement {
     public ResultSet executeQuery() throws SQLException {
         try {
             return super.executeQuery();

@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
-public class LightProxyCallableStatement extends ProxyCallableStatement implements PreparedStatement, Statement, CallableStatement, AutoCloseable, Wrapper {
+public class LightProxyCallableStatement extends ProxyCallableStatement {
     public ResultSet executeQuery() throws SQLException {
         try {
             return super.executeQuery();

@@ -63,9 +63,8 @@ import java.util.concurrent.ScheduledFuture;
         this.endOfLife = endOfLife;
     }
 
-    Connection createProxyConnection(ProxyLeakTask leakTask, long now) {
-        val proxyConnection = ProxyFactory.getProxyConnection(this, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
-        return proxyConnection;
+    LightProxyConnection createProxyConnection(ProxyLeakTask leakTask, long now) {
+        return ProxyFactory.getProxyConnection(this, connection, openStatements, leakTask, now, isReadOnly, isAutoCommit);
     }
 
     void resetConnectionState(final ProxyConnection proxyConnection, final int dirtyBits) throws SQLException {

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-public class LightProxyConnection extends ProxyConnection implements Connection, AutoCloseable, Wrapper {
+public class LightProxyConnection extends ProxyConnection {
     public Statement createStatement() throws SQLException {
         try {
             return super.createStatement();

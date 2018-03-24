@@ -129,9 +129,12 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                     timeout = hardTimeout - ClockSource.elapsedMillis(startTime);
                 } else {
                     metricsTracker.recordBorrowStats(poolEntry, startTime);
-                    markTenantCode(poolEntry);
+
                     val leakTask = leakTaskFactory.schedule(poolEntry);
-                    return poolEntry.createProxyConnection(leakTask, now);
+                    val proxyConnection = poolEntry.createProxyConnection(leakTask, now);
+                    markTenantCode(poolEntry, proxyConnection);
+
+                    return proxyConnection;
                 }
             } while (timeout > 0L);
 
@@ -143,7 +146,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         }
     }
 
-    private void markTenantCode(PoolEntry entry) {
+    private void markTenantCode(PoolEntry entry, LightProxyConnection proxyConnection) {
         val tenantEnvAware = config.getTenantEnvironmentAware();
         if (tenantEnvAware == null) return;
 
