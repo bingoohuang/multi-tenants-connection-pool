@@ -1,25 +1,11 @@
-/*
- * Copyright (C) 2013, 2014 Brett Wooldridge
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.github.bingoohuang.mtcp;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.github.bingoohuang.mtcp.metrics.MetricsTrackerFactory;
 import com.github.bingoohuang.mtcp.util.PropertyElf;
 import com.github.bingoohuang.mtcp.util.UtilityElf;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -59,41 +45,41 @@ public class LightConfig implements LightConfigMXBean {
 
     // Properties changeable at runtime through the LightConfigMXBean
     //
-    private volatile long connectionTimeout;
-    private volatile long validationTimeout;
-    private volatile long idleTimeout;
-    private volatile long leakDetectionThreshold;
-    private volatile long maxLifetime;
-    private volatile int maxPoolSize;
-    private volatile int minIdle;
-    private volatile String username;
-    private volatile String password;
+    @Getter private volatile long connectionTimeout;
+    @Getter private volatile long validationTimeout;
+    @Getter private volatile long idleTimeout;
+    @Setter @Getter private volatile long leakDetectionThreshold;
+    @Setter @Getter private volatile long maxLifetime;
+    @Getter private volatile int maxPoolSize;
+    @Getter private volatile int minIdle;
+    @Setter @Getter private volatile String username;
+    @Setter @Getter private volatile String password;
 
-    private String tenantEnvironmentAwareClassName;
-    private TenantEnvironmentAware tenantEnvironmentAware;
+    @Getter private String tenantEnvironmentAwareClassName;
+    @Setter @Getter private TenantEnvironmentAware tenantEnvironmentAware;
 
     // Properties NOT changeable at runtime
     //
-    private long initializationFailTimeout;
-    private String catalog;
-    private String connectionInitSql;
-    private String connectionTestQuery;
-    private String dataSourceClassName;
+    @Getter private long initializationFailTimeout;
+    @Getter private String catalog;
+    @Getter private String connectionInitSql;
+    @Getter private String connectionTestQuery;
+    @Getter private String dataSourceClassName;
     private String dataSourceJndiName;
     private String driverClassName;
     private String jdbcUrl;
-    private String poolName;
-    private String schema;
+    @Getter private String poolName;
+    @Getter private String schema;
     private String transactionIsolationName;
     private boolean isAutoCommit;
-    private boolean isReadOnly;
+    @Getter private boolean isReadOnly;
     private boolean isIsolateInternalQueries;
     private boolean isRegisterMbeans;
     private boolean isAllowPoolSuspension;
-    private DataSource dataSource;
+    @Getter private DataSource dataSource;
     private Properties dataSourceProperties;
     private ThreadFactory threadFactory;
-    private ScheduledExecutorService scheduledExecutor;
+    @Getter private ScheduledExecutorService scheduledExecutor;
     private MetricsTrackerFactory metricsTrackerFactory;
     private Object metricRegistry;
     private Object healthCheckRegistry;
@@ -154,14 +140,6 @@ public class LightConfig implements LightConfigMXBean {
      * {@inheritDoc}
      */
     @Override
-    public long getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setConnectionTimeout(long connectionTimeoutMs) {
         if (connectionTimeoutMs == 0) {
             this.connectionTimeout = Integer.MAX_VALUE;
@@ -172,29 +150,9 @@ public class LightConfig implements LightConfigMXBean {
         }
     }
 
-    public String getTenantEnvironmentAwareClassName() {
-        return tenantEnvironmentAwareClassName;
-    }
-
     public void setTenantEnvironmentAwareClassName(String tenantEnvironmentAwareClassName) {
         this.tenantEnvironmentAwareClassName = tenantEnvironmentAwareClassName;
         this.tenantEnvironmentAware = UtilityElf.createInstance(tenantEnvironmentAwareClassName, TenantEnvironmentAware.class);
-    }
-
-    public void setTenantEnvironmentAware(TenantEnvironmentAware tenantEnvironmentAware) {
-        this.tenantEnvironmentAware = tenantEnvironmentAware;
-    }
-
-    public TenantEnvironmentAware getTenantEnvironmentAware() {
-        return this.tenantEnvironmentAware;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getIdleTimeout() {
-        return idleTimeout;
     }
 
     /**
@@ -212,47 +170,7 @@ public class LightConfig implements LightConfigMXBean {
      * {@inheritDoc}
      */
     @Override
-    public long getLeakDetectionThreshold() {
-        return leakDetectionThreshold;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setLeakDetectionThreshold(long leakDetectionThresholdMs) {
-        this.leakDetectionThreshold = leakDetectionThresholdMs;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getMaxLifetime() {
-        return maxLifetime;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMaxLifetime(long maxLifetimeMs) {
-        this.maxLifetime = maxLifetimeMs;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getMaximumPoolSize() {
-        return maxPoolSize;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMaximumPoolSize(int maxPoolSize) {
+    public void setMaxPoolSize(int maxPoolSize) {
         if (maxPoolSize < 1) {
             throw new IllegalArgumentException("maxPoolSize cannot be less than 1");
         }
@@ -263,65 +181,11 @@ public class LightConfig implements LightConfigMXBean {
      * {@inheritDoc}
      */
     @Override
-    public int getMinimumIdle() {
-        return minIdle;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMinimumIdle(int minIdle) {
+    public void setMinIdle(int minIdle) {
         if (minIdle < 0) {
             throw new IllegalArgumentException("minimumIdle cannot be negative");
         }
         this.minIdle = minIdle;
-    }
-
-    /**
-     * Get the default password to use for DataSource.getConnection(username, password) calls.
-     *
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Set the default password to use for DataSource.getConnection(username, password) calls.
-     *
-     * @param password the password
-     */
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
-     * Get the default username used for DataSource.getConnection(username, password) calls.
-     *
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Set the default username used for DataSource.getConnection(username, password) calls.
-     *
-     * @param username the username
-     */
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getValidationTimeout() {
-        return validationTimeout;
     }
 
     /**
@@ -340,14 +204,6 @@ public class LightConfig implements LightConfigMXBean {
     //                     All other configuration methods
     // ***********************************************************************
 
-    /**
-     * Get the default catalog name to be set on connections.
-     *
-     * @return the default catalog name
-     */
-    public String getCatalog() {
-        return catalog;
-    }
 
     /**
      * Set the default catalog name to be set on connections.
@@ -361,14 +217,6 @@ public class LightConfig implements LightConfigMXBean {
         this.catalog = catalog;
     }
 
-    /**
-     * Get the SQL query to be executed to test the validity of connections.
-     *
-     * @return the SQL query string, or null
-     */
-    public String getConnectionTestQuery() {
-        return connectionTestQuery;
-    }
 
     /**
      * Set the SQL query to be executed to test the validity of connections. Using
@@ -382,16 +230,6 @@ public class LightConfig implements LightConfigMXBean {
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.connectionTestQuery = connectionTestQuery;
-    }
-
-    /**
-     * Get the SQL string that will be executed on all new connections when they are
-     * created, before they are added to the pool.
-     *
-     * @return the SQL to execute on new connections, or null
-     */
-    public String getConnectionInitSql() {
-        return connectionInitSql;
     }
 
     /**
@@ -409,16 +247,6 @@ public class LightConfig implements LightConfigMXBean {
     }
 
     /**
-     * Get the {@link DataSource} that has been explicitly specified to be wrapped by the
-     * pool.
-     *
-     * @return the {@link DataSource} instance, or null
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    /**
      * Set a {@link DataSource} for the pool to explicitly wrap.  This setter is not
      * available through property file based initialization.
      *
@@ -429,15 +257,6 @@ public class LightConfig implements LightConfigMXBean {
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.dataSource = dataSource;
-    }
-
-    /**
-     * Get the name of the JDBC {@link DataSource} class used to create Connections.
-     *
-     * @return the fully qualified name of the JDBC {@link DataSource} class
-     */
-    public String getDataSourceClassName() {
-        return dataSourceClassName;
     }
 
     /**
@@ -568,17 +387,6 @@ public class LightConfig implements LightConfigMXBean {
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.isAllowPoolSuspension = isAllowPoolSuspension;
-    }
-
-    /**
-     * Get the pool initialization failure timeout.  See {@code #setInitializationFailTimeout(long)}
-     * for details.
-     *
-     * @return the number of milliseconds before the pool initialization fails
-     * @see LightConfig#setInitializationFailTimeout(long)
-     */
-    public long getInitializationFailTimeout() {
-        return initializationFailTimeout;
     }
 
     /**
@@ -779,15 +587,6 @@ public class LightConfig implements LightConfigMXBean {
     }
 
     /**
-     * Determine whether the Connections in the pool are in read-only mode.
-     *
-     * @return {@code true} if the Connections in the pool are read-only, {@code false} if not
-     */
-    public boolean isReadOnly() {
-        return isReadOnly;
-    }
-
-    /**
      * Configures the Connections to be added to the pool as read-only Connections.
      *
      * @param readOnly {@code true} if the Connections in the pool are read-only, {@code false} if not
@@ -822,13 +621,6 @@ public class LightConfig implements LightConfigMXBean {
         this.isRegisterMbeans = register;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getPoolName() {
-        return poolName;
-    }
 
     /**
      * Set the name of the connection pool.  This is primarily used for the MBean
@@ -867,15 +659,6 @@ public class LightConfig implements LightConfigMXBean {
     }
 
     /**
-     * Get the ScheduledExecutorService used for housekeeping.
-     *
-     * @return the executor
-     */
-    public ScheduledExecutorService getScheduledExecutor() {
-        return scheduledExecutor;
-    }
-
-    /**
      * Set the ScheduledExecutorService used for housekeeping.
      *
      * @param executor the ScheduledExecutorService
@@ -889,15 +672,6 @@ public class LightConfig implements LightConfigMXBean {
 
     public String getTransactionIsolation() {
         return transactionIsolationName;
-    }
-
-    /**
-     * Get the default schema name to be set on connections.
-     *
-     * @return the default schema name
-     */
-    public String getSchema() {
-        return schema;
     }
 
     /**

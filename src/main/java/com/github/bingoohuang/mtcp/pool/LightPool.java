@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2013,2014 Brett Wooldridge
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.github.bingoohuang.mtcp.pool;
 
 import com.codahale.metrics.MetricRegistry;
@@ -99,11 +83,11 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
         val threadFactory = config.getThreadFactory();
 
-        final LinkedBlockingQueue<Runnable> addConnectionQueue = new LinkedBlockingQueue<>(config.getMaximumPoolSize());
+        final LinkedBlockingQueue<Runnable> addConnectionQueue = new LinkedBlockingQueue<>(config.getMaxPoolSize());
         this.addConnectionQueue = unmodifiableCollection(addConnectionQueue);
         this.addConnectionExecutor = createThreadPoolExecutor(addConnectionQueue,
                 poolName + " connection adder", threadFactory, new ThreadPoolExecutor.DiscardPolicy());
-        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(),
+        this.closeConnectionExecutor = createThreadPoolExecutor(config.getMaxPoolSize(),
                 poolName + " connection closer", threadFactory, new ThreadPoolExecutor.CallerRunsPolicy());
 
         this.leakTaskFactory = new ProxyLeakTaskFactory(config.getLeakDetectionThreshold(), houseKeepingExecutorService);
@@ -210,7 +194,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
 
             connectionBag.close();
 
-            val assassinExecutor = createThreadPoolExecutor(config.getMaximumPoolSize(),
+            val assassinExecutor = createThreadPoolExecutor(config.getMaxPoolSize(),
                     poolName + " connection assassinator",
                     config.getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
             try {
@@ -449,8 +433,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
      * Fill pool up from current idle connections (as they are perceived at the point of execution) to minimumIdle connections.
      */
     private synchronized void fillPool() {
-        int a = config.getMaximumPoolSize() - getTotalConnections();
-        int b = config.getMinimumIdle() - getIdleConnections();
+        int a = config.getMaxPoolSize() - getTotalConnections();
+        int b = config.getMinIdle() - getIdleConnections();
         val connectionsToAdd = Math.min(a, b) - addConnectionQueue.size();
         for (int i = 0; i < connectionsToAdd; i++) {
             addConnectionExecutor.submit((i < connectionsToAdd - 1) ? POOL_ENTRY_CREATOR : POST_FILL_POOL_ENTRY_CREATOR);
@@ -497,7 +481,7 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         do {
             val poolEntry = createPoolEntry();
             if (poolEntry != null) {
-                if (this.config.getMinimumIdle() > 0) {
+                if (this.config.getMinIdle() > 0) {
                     connectionBag.add(poolEntry);
                     log.debug("{} - Added connection {}", poolName, poolEntry.connection);
                 } else {
@@ -676,8 +660,8 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
          * @return true if we should create a connection, false if the need has disappeared
          */
         private boolean shouldCreateAnotherConnection() {
-            return getTotalConnections() < config.getMaximumPoolSize() &&
-                    (connectionBag.getWaitingThreadCount() > 0 || getIdleConnections() < config.getMinimumIdle());
+            return getTotalConnections() < config.getMaxPoolSize() &&
+                    (connectionBag.getWaitingThreadCount() > 0 || getIdleConnections() < config.getMinIdle());
         }
     }
 
@@ -714,12 +698,12 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
                 previous = now;
 
                 String afterPrefix = "Pool ";
-                if (idleTimeout > 0L && config.getMinimumIdle() < config.getMaximumPoolSize()) {
+                if (idleTimeout > 0L && config.getMinIdle() < config.getMaxPoolSize()) {
                     logPoolState("Before cleanup ");
                     afterPrefix = "After cleanup  ";
 
                     val notInUse = connectionBag.valuesFree();
-                    int toRemove = notInUse.size() - config.getMinimumIdle();
+                    int toRemove = notInUse.size() - config.getMinIdle();
                     for (val entry : notInUse) {
                         if (toRemove > 0 && ClockSource.elapsedMillis(entry.lastAccessed, now) > idleTimeout && connectionBag.reserve(entry)) {
                             closeConnection(entry, "(connection has passed idleTimeout)");

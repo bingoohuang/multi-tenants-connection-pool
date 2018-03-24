@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2013 Brett Wooldridge
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.github.bingoohuang.mtcp;
 
 /**
@@ -117,7 +101,7 @@ public interface LightConfigMXBean {
      *
      * @return the minimum number of connections in the pool
      */
-    int getMinimumIdle();
+    int getMinIdle();
 
     /**
      * The property controls the minimum number of idle connections that LightCP tries to maintain in the pool,
@@ -126,7 +110,7 @@ public interface LightConfigMXBean {
      *
      * @param minIdle the minimum number of idle connections in the pool to maintain
      */
-    void setMinimumIdle(int minIdle);
+    void setMinIdle(int minIdle);
 
     /**
      * The property controls the maximum number of connections that LightCP will keep in the pool,
@@ -134,7 +118,7 @@ public interface LightConfigMXBean {
      *
      * @return the maximum number of connections in the pool
      */
-    int getMaximumPoolSize();
+    int getMaxPoolSize();
 
     /**
      * The property controls the maximum size that the pool is allowed to reach, including both idle and in-use
@@ -146,7 +130,7 @@ public interface LightConfigMXBean {
      *
      * @param maxPoolSize the maximum number of connections in the pool
      */
-    void setMaximumPoolSize(int maxPoolSize);
+    void setMaxPoolSize(int maxPoolSize);
 
     /**
      * Set the password used for authentication. Changing this at runtime will apply to new connections only.
