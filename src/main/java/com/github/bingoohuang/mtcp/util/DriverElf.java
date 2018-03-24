@@ -1,6 +1,5 @@
 package com.github.bingoohuang.mtcp.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -8,9 +7,9 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Slf4j @UtilityClass
+@Slf4j
 public class DriverElf {
-    public Driver createDriver(String jdbcUrl, String driverClassName) {
+    public static Driver createDriver(String jdbcUrl, String driverClassName) {
         Driver driver = null;
         if (driverClassName != null) {
             driver = findDriver(driverClassName);
@@ -42,7 +41,7 @@ public class DriverElf {
         return null;
     }
 
-    public Class<?> loadDriverClass(String driverClassName, boolean logError) {
+    public static Class<?> loadDriverClass(String driverClassName, boolean logError) {
         Class<?> driverClass = null;
         val classLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -72,7 +71,7 @@ public class DriverElf {
         return driverClass;
     }
 
-    private Driver checkJdbcUrlAccepts(String jdbcUrl, String driverClassName, Driver driver) {
+    private static Driver checkJdbcUrlAccepts(String jdbcUrl, String driverClassName, Driver driver) {
         try {
             if (driver == null) {
                 return DriverManager.getDriver(jdbcUrl);
