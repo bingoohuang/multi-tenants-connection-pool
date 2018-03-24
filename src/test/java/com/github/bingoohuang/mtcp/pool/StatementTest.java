@@ -19,8 +19,8 @@ public class StatementTest {
     @Before
     public void setup() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(2);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 

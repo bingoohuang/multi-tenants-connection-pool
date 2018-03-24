@@ -29,8 +29,8 @@ public class TestMetrics {
         MetricRegistry metricRegistry = new MetricRegistry();
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setMetricRegistry(metricRegistry);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -57,8 +57,8 @@ public class TestMetrics {
         MetricRegistry metricRegistry = new MetricRegistry();
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setMetricRegistry(metricRegistry);
         config.setInitializationFailTimeout(0);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -88,7 +88,7 @@ public class TestMetrics {
         HealthCheckRegistry healthRegistry = new HealthCheckRegistry();
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMaximumPoolSize(10);
+        config.setMaxPoolSize(10);
         config.setMetricRegistry(metricRegistry);
         config.setHealthCheckRegistry(healthRegistry);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -119,7 +119,7 @@ public class TestMetrics {
     @Test
     public void testSetters1() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             MetricRegistry metricRegistry = new MetricRegistry();
@@ -152,7 +152,7 @@ public class TestMetrics {
     @Test
     public void testSetters2() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             MetricRegistry metricRegistry = new MetricRegistry();
@@ -179,7 +179,7 @@ public class TestMetrics {
     @Test
     public void testSetters3() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             MetricRegistry metricRegistry = new MetricRegistry();
@@ -209,7 +209,7 @@ public class TestMetrics {
     @Test
     public void testSetters4() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             MetricRegistry metricRegistry = new MetricRegistry();
@@ -233,7 +233,7 @@ public class TestMetrics {
     @Test
     public void testSetters5() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             MetricRegistry metricRegistry = new MetricRegistry();
@@ -258,7 +258,7 @@ public class TestMetrics {
     @Test(expected = IllegalArgumentException.class)
     public void testFakeMetricRegistryThrowsIllegalArgumentException() {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             FakeMetricRegistry metricRegistry = new FakeMetricRegistry();
@@ -273,7 +273,7 @@ public class TestMetrics {
     @Test
     public void testMetricRegistrySubclassIsAllowed() {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMaximumPoolSize(1);
+            ds.setMaxPoolSize(1);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
             ds.setMetricRegistry(new MetricRegistry() {

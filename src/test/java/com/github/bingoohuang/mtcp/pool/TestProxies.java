@@ -18,8 +18,8 @@ public class TestProxies {
     @Test
     public void testProxyCreation() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -54,8 +54,8 @@ public class TestProxies {
     @Test
     public void testStatementProxy() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -82,8 +82,8 @@ public class TestProxies {
     @Test
     public void testStatementExceptions() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(1));
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -182,8 +182,8 @@ public class TestProxies {
     @Test
     public void testOtherExceptions() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 

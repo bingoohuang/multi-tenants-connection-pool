@@ -1,12 +1,7 @@
 package com.github.bingoohuang.mtcp.pool;
 
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.sql.Wrapper;
+import java.sql.*;
 
 public class LightProxyStatement extends ProxyStatement implements Statement, AutoCloseable, Wrapper {
     public ResultSet executeQuery(String var1) throws SQLException {

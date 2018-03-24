@@ -30,8 +30,8 @@ public class TestSealedConfig {
             ds.setIdleTimeout(30000);
             ds.setLeakDetectionThreshold(60000);
             ds.setMaxLifetime(1800000);
-            ds.setMinimumIdle(5);
-            ds.setMaximumPoolSize(8);
+            ds.setMinIdle(5);
+            ds.setMaxPoolSize(8);
             ds.setPassword("password");
             ds.setUsername("username");
         }

@@ -30,8 +30,8 @@ public class MetricsTrackerTest {
         StubMetricsTracker metricsTracker = new StubMetricsTracker();
 
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMinimumIdle(0);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(0);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTimeout(timeoutMillis);
             ds.setDataSource(stubDataSource);
             ds.setMetricsTrackerFactory((poolName, poolStats) -> metricsTracker);

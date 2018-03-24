@@ -13,8 +13,8 @@ public class IsolationTest {
     @Test
     public void testIsolation() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setIsolateInternalQueries(true);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -34,8 +34,8 @@ public class IsolationTest {
     @Test
     public void testNonIsolation() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setIsolateInternalQueries(false);
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 

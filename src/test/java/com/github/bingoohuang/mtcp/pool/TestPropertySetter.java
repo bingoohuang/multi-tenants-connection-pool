@@ -20,7 +20,7 @@ public class TestPropertySetter {
         LightConfig config = new LightConfig(propfile1);
         config.validate();
 
-        assertEquals(5, config.getMinimumIdle());
+        assertEquals(5, config.getMinIdle());
         assertEquals("SELECT 1", config.getConnectionTestQuery());
     }
 

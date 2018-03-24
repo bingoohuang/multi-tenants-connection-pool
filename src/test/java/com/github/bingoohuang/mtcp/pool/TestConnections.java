@@ -39,8 +39,8 @@ public class TestConnections {
     @Test
     public void testCreate() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setConnectionInitSql("SELECT 1");
         config.setReadOnly(true);
@@ -83,8 +83,8 @@ public class TestConnections {
     @Test
     public void testMaxLifetime() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2500);
         config.setConnectionTestQuery("VALUES 1");
         config.setInitializationFailTimeout(Long.MAX_VALUE);
@@ -139,8 +139,8 @@ public class TestConnections {
     @Test
     public void testMaxLifetime2() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2500);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -191,8 +191,8 @@ public class TestConnections {
     @Test
     public void testDoubleClose() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2500);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -213,8 +213,8 @@ public class TestConnections {
     @Test
     public void testEviction() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(5);
         config.setConnectionTimeout(2500);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -232,8 +232,8 @@ public class TestConnections {
     @Test
     public void testBackfill() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(4);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(4);
         config.setConnectionTimeout(1000);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTestQuery("VALUES 1");
@@ -289,8 +289,8 @@ public class TestConnections {
     @Test
     public void testMaximumPoolLimit() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(4);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(4);
         config.setConnectionTimeout(20000);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
@@ -337,8 +337,8 @@ public class TestConnections {
     @SuppressWarnings("EmptyTryBlock")
     public void testOldDriver() throws Exception {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2500);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -368,8 +368,8 @@ public class TestConnections {
         stubDataSource.setThrowException(new SQLException("Connection refused"));
 
         try (LightDataSource ds = TestElf.newLightDataSource()) {
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTimeout(2500);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSource(stubDataSource);
@@ -388,7 +388,7 @@ public class TestConnections {
         stubDataSource.setThrowException(new SQLException("Connection refused"));
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
+        config.setMinIdle(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSource(stubDataSource);
 
@@ -419,8 +419,8 @@ public class TestConnections {
         };
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(2);
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(3));
         config.setConnectionTestQuery("VALUES 1");
         config.setInitializationFailTimeout(TimeUnit.SECONDS.toMillis(2));
@@ -447,7 +447,7 @@ public class TestConnections {
     @Test
     public void testPopulationSlowAcquisition() throws InterruptedException, SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMaximumPoolSize(20);
+        config.setMaxPoolSize(20);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -489,8 +489,8 @@ public class TestConnections {
     @SuppressWarnings("EmptyTryBlock")
     public void testMinimumIdleZero() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(5);
         config.setConnectionTimeout(1000L);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");

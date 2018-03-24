@@ -31,8 +31,8 @@ public class SaturatedPoolTest830 {
     @Test
     public void saturatedPoolTest() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(MAX_POOL_SIZE);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(MAX_POOL_SIZE);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTimeout(1000);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");

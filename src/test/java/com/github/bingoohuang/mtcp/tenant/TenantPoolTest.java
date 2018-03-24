@@ -69,8 +69,8 @@ public class TenantPoolTest {
 
     private static LightConfig createH2LightConfig() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(2);
         config.setConnectionTestQuery("SELECT 1");
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
         config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");

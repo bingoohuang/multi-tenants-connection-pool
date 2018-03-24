@@ -24,8 +24,8 @@ public class BasicPoolTest {
     @Before
     public void setup() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(2);
         config.setConnectionTestQuery("SELECT 1");
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
         config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
@@ -46,8 +46,8 @@ public class BasicPoolTest {
     @Test
     public void testIdleTimeout() throws InterruptedException, SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(10);
         config.setConnectionTestQuery("SELECT 1");
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
         config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
@@ -87,7 +87,7 @@ public class BasicPoolTest {
     @Test
     public void testIdleTimeout2() throws InterruptedException, SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMaximumPoolSize(50);
+        config.setMaxPoolSize(50);
         config.setConnectionTestQuery("SELECT 1");
         config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
         config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");

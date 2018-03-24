@@ -1,4 +1,3 @@
-
 package com.github.bingoohuang.mtcp.pool;
 
 import com.github.bingoohuang.mtcp.LightConfig;
@@ -45,8 +44,8 @@ public class ShutdownTest {
         StubConnection.slowCreate = true;
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(10);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -93,8 +92,8 @@ public class ShutdownTest {
         StubConnection.slowCreate = true;
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(10);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(10);
+        config.setMaxPoolSize(10);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -122,8 +121,8 @@ public class ShutdownTest {
         StubConnection.slowCreate = false;
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(5);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -148,8 +147,8 @@ public class ShutdownTest {
         StubConnection.slowCreate = true;
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(10);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(10);
+        config.setMaxPoolSize(10);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -173,8 +172,8 @@ public class ShutdownTest {
         Assert.assertSame("StubConnection count not as expected", 0, StubConnection.count.get());
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(5);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -200,8 +199,8 @@ public class ShutdownTest {
     @Test
     public void testAfterShutdown() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(5);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -219,8 +218,8 @@ public class ShutdownTest {
     @Test
     public void testShutdownDuringInit() {
         final LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(5);
         config.setConnectionTimeout(1000);
         config.setValidationTimeout(1000);
         config.setInitializationFailTimeout(0);
@@ -236,8 +235,8 @@ public class ShutdownTest {
     @Test
     public void testThreadedShutdown() throws Exception {
         final LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(5);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(5);
         config.setConnectionTimeout(1000);
         config.setValidationTimeout(1000);
         config.setInitializationFailTimeout(0);

@@ -5,27 +5,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLType;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Wrapper;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -48,7 +28,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNull(int var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNull(var1, var2);
+            ((CallableStatement) super.delegate).setNull(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -56,7 +36,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBoolean(int var1, boolean var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBoolean(var1, var2);
+            ((CallableStatement) super.delegate).setBoolean(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -64,7 +44,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setByte(int var1, byte var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setByte(var1, var2);
+            ((CallableStatement) super.delegate).setByte(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -72,7 +52,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setShort(int var1, short var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setShort(var1, var2);
+            ((CallableStatement) super.delegate).setShort(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -80,7 +60,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setInt(int var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setInt(var1, var2);
+            ((CallableStatement) super.delegate).setInt(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -88,7 +68,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setLong(int var1, long var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setLong(var1, var2);
+            ((CallableStatement) super.delegate).setLong(var1, var2);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -96,7 +76,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setFloat(int var1, float var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setFloat(var1, var2);
+            ((CallableStatement) super.delegate).setFloat(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -104,7 +84,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDouble(int var1, double var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDouble(var1, var2);
+            ((CallableStatement) super.delegate).setDouble(var1, var2);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -112,7 +92,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBigDecimal(int var1, BigDecimal var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBigDecimal(var1, var2);
+            ((CallableStatement) super.delegate).setBigDecimal(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -120,7 +100,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setString(int var1, String var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setString(var1, var2);
+            ((CallableStatement) super.delegate).setString(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -128,7 +108,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBytes(int var1, byte[] var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBytes(var1, var2);
+            ((CallableStatement) super.delegate).setBytes(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -136,7 +116,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDate(int var1, Date var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDate(var1, var2);
+            ((CallableStatement) super.delegate).setDate(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -144,7 +124,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTime(int var1, Time var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTime(var1, var2);
+            ((CallableStatement) super.delegate).setTime(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -152,7 +132,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTimestamp(int var1, Timestamp var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTimestamp(var1, var2);
+            ((CallableStatement) super.delegate).setTimestamp(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -160,7 +140,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(int var1, InputStream var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -168,7 +148,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setUnicodeStream(int var1, InputStream var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setUnicodeStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setUnicodeStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -176,7 +156,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(int var1, InputStream var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -184,7 +164,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void clearParameters() throws SQLException {
         try {
-            ((CallableStatement)super.delegate).clearParameters();
+            ((CallableStatement) super.delegate).clearParameters();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -192,7 +172,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(int var1, Object var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -200,7 +180,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(int var1, Object var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2);
+            ((CallableStatement) super.delegate).setObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -216,7 +196,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void addBatch() throws SQLException {
         try {
-            ((CallableStatement)super.delegate).addBatch();
+            ((CallableStatement) super.delegate).addBatch();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -224,7 +204,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(int var1, Reader var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -232,7 +212,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setRef(int var1, Ref var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setRef(var1, var2);
+            ((CallableStatement) super.delegate).setRef(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -240,7 +220,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(int var1, Blob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2);
+            ((CallableStatement) super.delegate).setBlob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -248,7 +228,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(int var1, Clob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2);
+            ((CallableStatement) super.delegate).setClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -256,7 +236,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setArray(int var1, Array var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setArray(var1, var2);
+            ((CallableStatement) super.delegate).setArray(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -264,7 +244,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public ResultSetMetaData getMetaData() throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getMetaData();
+            return ((CallableStatement) super.delegate).getMetaData();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -272,7 +252,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDate(int var1, Date var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDate(var1, var2, var3);
+            ((CallableStatement) super.delegate).setDate(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -280,7 +260,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTime(int var1, Time var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTime(var1, var2, var3);
+            ((CallableStatement) super.delegate).setTime(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -288,7 +268,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTimestamp(int var1, Timestamp var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTimestamp(var1, var2, var3);
+            ((CallableStatement) super.delegate).setTimestamp(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -296,7 +276,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNull(int var1, int var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNull(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNull(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -304,7 +284,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setURL(int var1, URL var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setURL(var1, var2);
+            ((CallableStatement) super.delegate).setURL(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -312,7 +292,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public ParameterMetaData getParameterMetaData() throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getParameterMetaData();
+            return ((CallableStatement) super.delegate).getParameterMetaData();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -320,7 +300,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setRowId(int var1, RowId var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setRowId(var1, var2);
+            ((CallableStatement) super.delegate).setRowId(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -328,7 +308,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNString(int var1, String var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNString(var1, var2);
+            ((CallableStatement) super.delegate).setNString(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -336,7 +316,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNCharacterStream(int var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNCharacterStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -344,7 +324,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(int var1, NClob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2);
+            ((CallableStatement) super.delegate).setNClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -352,7 +332,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(int var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setClob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -360,7 +340,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(int var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBlob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -368,7 +348,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(int var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNClob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -376,7 +356,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setSQLXML(int var1, SQLXML var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setSQLXML(var1, var2);
+            ((CallableStatement) super.delegate).setSQLXML(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -384,7 +364,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(int var1, Object var2, int var3, int var4) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3, var4);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3, var4);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -392,7 +372,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(int var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -400,7 +380,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(int var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -408,7 +388,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(int var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -416,7 +396,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(int var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -424,7 +404,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(int var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -432,7 +412,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(int var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -440,7 +420,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNCharacterStream(int var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNCharacterStream(var1, var2);
+            ((CallableStatement) super.delegate).setNCharacterStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -448,7 +428,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(int var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2);
+            ((CallableStatement) super.delegate).setClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -456,7 +436,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(int var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2);
+            ((CallableStatement) super.delegate).setBlob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -464,7 +444,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(int var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2);
+            ((CallableStatement) super.delegate).setNClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -472,7 +452,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(int var1, Object var2, SQLType var3, int var4) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3, var4);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3, var4);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -480,7 +460,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(int var1, Object var2, SQLType var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -488,7 +468,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public long executeLargeUpdate() throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).executeLargeUpdate();
+            return ((CallableStatement) super.delegate).executeLargeUpdate();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -888,7 +868,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -896,7 +876,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, int var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -904,7 +884,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public boolean wasNull() throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).wasNull();
+            return ((CallableStatement) super.delegate).wasNull();
         } catch (SQLException var2) {
             throw this.checkException(var2);
         }
@@ -912,7 +892,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public String getString(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getString(var1);
+            return ((CallableStatement) super.delegate).getString(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -920,7 +900,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public boolean getBoolean(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBoolean(var1);
+            return ((CallableStatement) super.delegate).getBoolean(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -928,7 +908,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public byte getByte(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getByte(var1);
+            return ((CallableStatement) super.delegate).getByte(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -936,7 +916,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public short getShort(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getShort(var1);
+            return ((CallableStatement) super.delegate).getShort(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -944,7 +924,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public int getInt(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getInt(var1);
+            return ((CallableStatement) super.delegate).getInt(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -952,7 +932,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public long getLong(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getLong(var1);
+            return ((CallableStatement) super.delegate).getLong(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -960,7 +940,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public float getFloat(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getFloat(var1);
+            return ((CallableStatement) super.delegate).getFloat(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -968,7 +948,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public double getDouble(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDouble(var1);
+            return ((CallableStatement) super.delegate).getDouble(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -976,7 +956,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public BigDecimal getBigDecimal(int var1, int var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBigDecimal(var1, var2);
+            return ((CallableStatement) super.delegate).getBigDecimal(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -984,7 +964,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public byte[] getBytes(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBytes(var1);
+            return ((CallableStatement) super.delegate).getBytes(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -992,7 +972,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Date getDate(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDate(var1);
+            return ((CallableStatement) super.delegate).getDate(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1000,7 +980,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Time getTime(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTime(var1);
+            return ((CallableStatement) super.delegate).getTime(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1008,7 +988,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Timestamp getTimestamp(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTimestamp(var1);
+            return ((CallableStatement) super.delegate).getTimestamp(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1016,7 +996,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1);
+            return ((CallableStatement) super.delegate).getObject(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1024,7 +1004,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public BigDecimal getBigDecimal(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBigDecimal(var1);
+            return ((CallableStatement) super.delegate).getBigDecimal(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1032,7 +1012,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(int var1, Map var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1, var2);
+            return ((CallableStatement) super.delegate).getObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1040,7 +1020,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Ref getRef(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getRef(var1);
+            return ((CallableStatement) super.delegate).getRef(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1048,7 +1028,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Blob getBlob(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBlob(var1);
+            return ((CallableStatement) super.delegate).getBlob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1056,7 +1036,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Clob getClob(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getClob(var1);
+            return ((CallableStatement) super.delegate).getClob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1064,7 +1044,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Array getArray(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getArray(var1);
+            return ((CallableStatement) super.delegate).getArray(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1072,7 +1052,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Date getDate(int var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDate(var1, var2);
+            return ((CallableStatement) super.delegate).getDate(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1080,7 +1060,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Time getTime(int var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTime(var1, var2);
+            return ((CallableStatement) super.delegate).getTime(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1088,7 +1068,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Timestamp getTimestamp(int var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTimestamp(var1, var2);
+            return ((CallableStatement) super.delegate).getTimestamp(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1096,7 +1076,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, int var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1104,7 +1084,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1112,7 +1092,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, int var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1120,7 +1100,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, int var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1128,7 +1108,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public URL getURL(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getURL(var1);
+            return ((CallableStatement) super.delegate).getURL(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1136,7 +1116,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setURL(String var1, URL var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setURL(var1, var2);
+            ((CallableStatement) super.delegate).setURL(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1144,7 +1124,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNull(String var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNull(var1, var2);
+            ((CallableStatement) super.delegate).setNull(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1152,7 +1132,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBoolean(String var1, boolean var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBoolean(var1, var2);
+            ((CallableStatement) super.delegate).setBoolean(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1160,7 +1140,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setByte(String var1, byte var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setByte(var1, var2);
+            ((CallableStatement) super.delegate).setByte(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1168,7 +1148,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setShort(String var1, short var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setShort(var1, var2);
+            ((CallableStatement) super.delegate).setShort(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1176,7 +1156,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setInt(String var1, int var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setInt(var1, var2);
+            ((CallableStatement) super.delegate).setInt(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1184,7 +1164,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setLong(String var1, long var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setLong(var1, var2);
+            ((CallableStatement) super.delegate).setLong(var1, var2);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1192,7 +1172,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setFloat(String var1, float var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setFloat(var1, var2);
+            ((CallableStatement) super.delegate).setFloat(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1200,7 +1180,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDouble(String var1, double var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDouble(var1, var2);
+            ((CallableStatement) super.delegate).setDouble(var1, var2);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1208,7 +1188,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBigDecimal(String var1, BigDecimal var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBigDecimal(var1, var2);
+            ((CallableStatement) super.delegate).setBigDecimal(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1216,7 +1196,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setString(String var1, String var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setString(var1, var2);
+            ((CallableStatement) super.delegate).setString(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1224,7 +1204,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBytes(String var1, byte[] var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBytes(var1, var2);
+            ((CallableStatement) super.delegate).setBytes(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1232,7 +1212,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDate(String var1, Date var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDate(var1, var2);
+            ((CallableStatement) super.delegate).setDate(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1240,7 +1220,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTime(String var1, Time var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTime(var1, var2);
+            ((CallableStatement) super.delegate).setTime(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1248,7 +1228,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTimestamp(String var1, Timestamp var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTimestamp(var1, var2);
+            ((CallableStatement) super.delegate).setTimestamp(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1256,7 +1236,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(String var1, InputStream var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1264,7 +1244,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(String var1, InputStream var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1272,7 +1252,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(String var1, Object var2, int var3, int var4) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3, var4);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3, var4);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1280,7 +1260,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(String var1, Object var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1288,7 +1268,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(String var1, Object var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2);
+            ((CallableStatement) super.delegate).setObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1296,7 +1276,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(String var1, Reader var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1304,7 +1284,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setDate(String var1, Date var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setDate(var1, var2, var3);
+            ((CallableStatement) super.delegate).setDate(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1312,7 +1292,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTime(String var1, Time var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTime(var1, var2, var3);
+            ((CallableStatement) super.delegate).setTime(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1320,7 +1300,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setTimestamp(String var1, Timestamp var2, Calendar var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setTimestamp(var1, var2, var3);
+            ((CallableStatement) super.delegate).setTimestamp(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1328,7 +1308,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNull(String var1, int var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNull(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNull(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1336,7 +1316,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public String getString(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getString(var1);
+            return ((CallableStatement) super.delegate).getString(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1344,7 +1324,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public boolean getBoolean(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBoolean(var1);
+            return ((CallableStatement) super.delegate).getBoolean(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1352,7 +1332,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public byte getByte(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getByte(var1);
+            return ((CallableStatement) super.delegate).getByte(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1360,7 +1340,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public short getShort(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getShort(var1);
+            return ((CallableStatement) super.delegate).getShort(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1368,7 +1348,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public int getInt(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getInt(var1);
+            return ((CallableStatement) super.delegate).getInt(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1376,7 +1356,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public long getLong(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getLong(var1);
+            return ((CallableStatement) super.delegate).getLong(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1384,7 +1364,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public float getFloat(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getFloat(var1);
+            return ((CallableStatement) super.delegate).getFloat(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1392,7 +1372,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public double getDouble(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDouble(var1);
+            return ((CallableStatement) super.delegate).getDouble(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1400,7 +1380,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public byte[] getBytes(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBytes(var1);
+            return ((CallableStatement) super.delegate).getBytes(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1408,7 +1388,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Date getDate(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDate(var1);
+            return ((CallableStatement) super.delegate).getDate(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1416,7 +1396,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Time getTime(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTime(var1);
+            return ((CallableStatement) super.delegate).getTime(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1424,7 +1404,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Timestamp getTimestamp(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTimestamp(var1);
+            return ((CallableStatement) super.delegate).getTimestamp(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1432,7 +1412,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1);
+            return ((CallableStatement) super.delegate).getObject(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1440,7 +1420,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public BigDecimal getBigDecimal(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBigDecimal(var1);
+            return ((CallableStatement) super.delegate).getBigDecimal(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1448,7 +1428,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(String var1, Map var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1, var2);
+            return ((CallableStatement) super.delegate).getObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1456,7 +1436,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Ref getRef(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getRef(var1);
+            return ((CallableStatement) super.delegate).getRef(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1464,7 +1444,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Blob getBlob(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getBlob(var1);
+            return ((CallableStatement) super.delegate).getBlob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1472,7 +1452,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Clob getClob(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getClob(var1);
+            return ((CallableStatement) super.delegate).getClob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1480,7 +1460,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Array getArray(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getArray(var1);
+            return ((CallableStatement) super.delegate).getArray(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1488,7 +1468,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Date getDate(String var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getDate(var1, var2);
+            return ((CallableStatement) super.delegate).getDate(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1496,7 +1476,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Time getTime(String var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTime(var1, var2);
+            return ((CallableStatement) super.delegate).getTime(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1504,7 +1484,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Timestamp getTimestamp(String var1, Calendar var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getTimestamp(var1, var2);
+            return ((CallableStatement) super.delegate).getTimestamp(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1512,7 +1492,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public URL getURL(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getURL(var1);
+            return ((CallableStatement) super.delegate).getURL(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1520,7 +1500,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public RowId getRowId(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getRowId(var1);
+            return ((CallableStatement) super.delegate).getRowId(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1528,7 +1508,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public RowId getRowId(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getRowId(var1);
+            return ((CallableStatement) super.delegate).getRowId(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1536,7 +1516,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setRowId(String var1, RowId var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setRowId(var1, var2);
+            ((CallableStatement) super.delegate).setRowId(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1544,7 +1524,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNString(String var1, String var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNString(var1, var2);
+            ((CallableStatement) super.delegate).setNString(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1552,7 +1532,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNCharacterStream(String var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNCharacterStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1560,7 +1540,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(String var1, NClob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2);
+            ((CallableStatement) super.delegate).setNClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1568,7 +1548,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(String var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setClob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1576,7 +1556,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(String var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBlob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1584,7 +1564,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(String var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2, var3);
+            ((CallableStatement) super.delegate).setNClob(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1592,7 +1572,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public NClob getNClob(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNClob(var1);
+            return ((CallableStatement) super.delegate).getNClob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1600,7 +1580,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public NClob getNClob(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNClob(var1);
+            return ((CallableStatement) super.delegate).getNClob(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1608,7 +1588,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setSQLXML(String var1, SQLXML var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setSQLXML(var1, var2);
+            ((CallableStatement) super.delegate).setSQLXML(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1616,7 +1596,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public SQLXML getSQLXML(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getSQLXML(var1);
+            return ((CallableStatement) super.delegate).getSQLXML(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1624,7 +1604,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public SQLXML getSQLXML(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getSQLXML(var1);
+            return ((CallableStatement) super.delegate).getSQLXML(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1632,7 +1612,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public String getNString(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNString(var1);
+            return ((CallableStatement) super.delegate).getNString(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1640,7 +1620,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public String getNString(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNString(var1);
+            return ((CallableStatement) super.delegate).getNString(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1648,7 +1628,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Reader getNCharacterStream(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNCharacterStream(var1);
+            return ((CallableStatement) super.delegate).getNCharacterStream(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1656,7 +1636,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Reader getNCharacterStream(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getNCharacterStream(var1);
+            return ((CallableStatement) super.delegate).getNCharacterStream(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1664,7 +1644,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Reader getCharacterStream(int var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getCharacterStream(var1);
+            return ((CallableStatement) super.delegate).getCharacterStream(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1672,7 +1652,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Reader getCharacterStream(String var1) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getCharacterStream(var1);
+            return ((CallableStatement) super.delegate).getCharacterStream(var1);
         } catch (SQLException var3) {
             throw this.checkException(var3);
         }
@@ -1680,7 +1660,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(String var1, Blob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2);
+            ((CallableStatement) super.delegate).setBlob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1688,7 +1668,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(String var1, Clob var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2);
+            ((CallableStatement) super.delegate).setClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1696,7 +1676,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(String var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1704,7 +1684,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(String var1, InputStream var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1712,7 +1692,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(String var1, Reader var2, long var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2, var3);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2, var3);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1720,7 +1700,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setAsciiStream(String var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setAsciiStream(var1, var2);
+            ((CallableStatement) super.delegate).setAsciiStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1728,7 +1708,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBinaryStream(String var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBinaryStream(var1, var2);
+            ((CallableStatement) super.delegate).setBinaryStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1736,7 +1716,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setCharacterStream(String var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setCharacterStream(var1, var2);
+            ((CallableStatement) super.delegate).setCharacterStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1744,7 +1724,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNCharacterStream(String var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNCharacterStream(var1, var2);
+            ((CallableStatement) super.delegate).setNCharacterStream(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1752,7 +1732,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setClob(String var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setClob(var1, var2);
+            ((CallableStatement) super.delegate).setClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1760,7 +1740,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setBlob(String var1, InputStream var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setBlob(var1, var2);
+            ((CallableStatement) super.delegate).setBlob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1768,7 +1748,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setNClob(String var1, Reader var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setNClob(var1, var2);
+            ((CallableStatement) super.delegate).setNClob(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1776,7 +1756,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(int var1, Class var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1, var2);
+            return ((CallableStatement) super.delegate).getObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1784,7 +1764,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public Object getObject(String var1, Class var2) throws SQLException {
         try {
-            return ((CallableStatement)super.delegate).getObject(var1, var2);
+            return ((CallableStatement) super.delegate).getObject(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1792,7 +1772,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(String var1, Object var2, SQLType var3, int var4) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3, var4);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3, var4);
         } catch (SQLException var6) {
             throw this.checkException(var6);
         }
@@ -1800,7 +1780,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void setObject(String var1, Object var2, SQLType var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).setObject(var1, var2, var3);
+            ((CallableStatement) super.delegate).setObject(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1808,7 +1788,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, SQLType var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1816,7 +1796,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, SQLType var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1824,7 +1804,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(int var1, SQLType var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1832,7 +1812,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, SQLType var2) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2);
         } catch (SQLException var4) {
             throw this.checkException(var4);
         }
@@ -1840,7 +1820,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, SQLType var2, int var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }
@@ -1848,7 +1828,7 @@ public class LightProxyCallableStatement extends ProxyCallableStatement implemen
 
     public void registerOutParameter(String var1, SQLType var2, String var3) throws SQLException {
         try {
-            ((CallableStatement)super.delegate).registerOutParameter(var1, var2, var3);
+            ((CallableStatement) super.delegate).registerOutParameter(var1, var2, var3);
         } catch (SQLException var5) {
             throw this.checkException(var5);
         }

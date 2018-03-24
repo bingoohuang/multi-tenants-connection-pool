@@ -15,8 +15,8 @@ public class RampUpDown {
     @Test
     public void rampUpDownTest() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(60);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(60);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -33,7 +33,7 @@ public class RampUpDown {
 
             Assert.assertSame("Total connections not as expected", 5, pool.getTotalConnections());
 
-            Connection[] connections = new Connection[ds.getMaximumPoolSize()];
+            Connection[] connections = new Connection[ds.getMaxPoolSize()];
             for (int i = 0; i < connections.length; i++) {
                 connections[i] = ds.getConnection();
             }

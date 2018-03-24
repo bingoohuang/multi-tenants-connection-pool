@@ -18,7 +18,7 @@ public class TestValidation {
         System.setProperty("lightcp.configurationFile", "/propfile1.properties");
         LightConfig config = TestElf.newLightConfig();
         System.clearProperty("lightcp.configurationFile");
-        assertEquals(5, config.getMinimumIdle());
+        assertEquals(5, config.getMinIdle());
     }
 
     @Test
@@ -144,7 +144,7 @@ public class TestValidation {
     public void validateInvalidMinIdle() {
         try {
             LightConfig config = TestElf.newLightConfig();
-            config.setMinimumIdle(-1);
+            config.setMinIdle(-1);
             fail();
         } catch (IllegalArgumentException ise) {
             assertTrue(ise.getMessage().contains("minimumIdle cannot be negative"));
@@ -155,7 +155,7 @@ public class TestValidation {
     public void validateInvalidMaxPoolSize() {
         try {
             LightConfig config = TestElf.newLightConfig();
-            config.setMaximumPoolSize(0);
+            config.setMaxPoolSize(0);
             fail();
         } catch (IllegalArgumentException ise) {
             assertTrue(ise.getMessage().contains("maxPoolSize cannot be less than 1"));

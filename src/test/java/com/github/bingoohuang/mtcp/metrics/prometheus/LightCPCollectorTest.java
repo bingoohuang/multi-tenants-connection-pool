@@ -17,7 +17,7 @@ public class LightCPCollectorTest {
     @Test
     public void noConnection() {
         LightConfig config = newLightConfig();
-        config.setMinimumIdle(0);
+        config.setMinIdle(0);
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -35,7 +35,7 @@ public class LightCPCollectorTest {
     @Test
     public void noConnectionWithoutPoolName() {
         LightConfig config = new LightConfig();
-        config.setMinimumIdle(0);
+        config.setMinIdle(0);
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -56,7 +56,7 @@ public class LightCPCollectorTest {
         LightConfig config = newLightConfig();
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-        config.setMaximumPoolSize(1);
+        config.setMaxPoolSize(1);
 
         StubConnection.slowCreate = true;
         try (LightDataSource ds = new LightDataSource(config);
@@ -78,7 +78,7 @@ public class LightCPCollectorTest {
         LightConfig config = newLightConfig();
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
-        config.setMaximumPoolSize(1);
+        config.setMaxPoolSize(1);
 
         StubConnection.slowCreate = true;
         try (LightDataSource ds = new LightDataSource(config)) {

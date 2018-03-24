@@ -17,8 +17,8 @@ public class ConnectionStateTest {
     public void testAutoCommit() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
             ds.setAutoCommit(true);
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
             ds.addDataSourceProperty("user", "bar");
@@ -40,8 +40,8 @@ public class ConnectionStateTest {
     public void testTransactionIsolation() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
             ds.setTransactionIsolation("TRANSACTION_READ_COMMITTED");
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -70,8 +70,8 @@ public class ConnectionStateTest {
     public void testReadOnly() throws Exception {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
             ds.setCatalog("test");
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -89,8 +89,8 @@ public class ConnectionStateTest {
     public void testCatalog() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
             ds.setCatalog("test");
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 
@@ -108,8 +108,8 @@ public class ConnectionStateTest {
     public void testCommitTracking() throws SQLException {
         try (LightDataSource ds = TestElf.newLightDataSource()) {
             ds.setAutoCommit(false);
-            ds.setMinimumIdle(1);
-            ds.setMaximumPoolSize(1);
+            ds.setMinIdle(1);
+            ds.setMaxPoolSize(1);
             ds.setConnectionTestQuery("VALUES 1");
             ds.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
 

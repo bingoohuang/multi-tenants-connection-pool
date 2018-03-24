@@ -26,7 +26,7 @@ public class PrometheusMetricsTrackerTest {
         LightConfig config = newLightConfig();
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setJdbcUrl("jdbc:h2:mem:");
-        config.setMaximumPoolSize(2);
+        config.setMaxPoolSize(2);
         config.setConnectionTimeout(250);
 
         String[] labelNames = {POOL_LABEL_NAME};
@@ -72,7 +72,7 @@ public class PrometheusMetricsTrackerTest {
         config.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
         config.setPoolName("first");
         config.setJdbcUrl("jdbc:h2:mem:");
-        config.setMaximumPoolSize(2);
+        config.setMaxPoolSize(2);
         config.setConnectionTimeout(250);
         String[] labelValues1 = {config.getPoolName()};
 
@@ -86,7 +86,7 @@ public class PrometheusMetricsTrackerTest {
             config2.setMetricsTrackerFactory(new PrometheusMetricsTrackerFactory());
             config2.setPoolName("second");
             config2.setJdbcUrl("jdbc:h2:mem:");
-            config2.setMaximumPoolSize(4);
+            config2.setMaxPoolSize(4);
             config2.setConnectionTimeout(250);
             String[] labelValues2 = {config2.getPoolName()};
 

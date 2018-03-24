@@ -23,7 +23,7 @@ public final class UtilityElf {
 
 
     public static boolean objectEquals(Object a, Object b) {
-        if (a == null && b == null ) return true;
+        if (a == null && b == null) return true;
         return a != null && a.equals(b);
     }
 

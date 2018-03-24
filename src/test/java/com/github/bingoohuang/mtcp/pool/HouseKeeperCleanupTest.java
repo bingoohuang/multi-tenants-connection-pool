@@ -33,8 +33,8 @@ public class HouseKeeperCleanupTest {
     @Test
     public void testHouseKeeperCleanupWithCustomExecutor() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(10);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTimeout(2500);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");

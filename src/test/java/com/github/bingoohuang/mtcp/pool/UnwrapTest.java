@@ -18,8 +18,8 @@ public class UnwrapTest {
     @Test
     public void testUnwrapConnection() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
@@ -39,8 +39,8 @@ public class UnwrapTest {
     @Test
     public void testUnwrapDataSource() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setInitializationFailTimeout(0);
         config.setConnectionTestQuery("VALUES 1");
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");

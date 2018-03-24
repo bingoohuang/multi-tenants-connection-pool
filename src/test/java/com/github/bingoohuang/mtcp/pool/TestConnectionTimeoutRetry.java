@@ -26,8 +26,8 @@ public class TestConnectionTimeoutRetry {
     @Test
     public void testConnectionRetries() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2800);
         config.setValidationTimeout(2800);
         config.setConnectionTestQuery("VALUES 1");
@@ -52,8 +52,8 @@ public class TestConnectionTimeoutRetry {
     @Test
     public void testConnectionRetries2() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(2800);
         config.setValidationTimeout(2800);
         config.setInitializationFailTimeout(0);
@@ -92,8 +92,8 @@ public class TestConnectionTimeoutRetry {
     @Test
     public void testConnectionRetries3() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(2);
         config.setConnectionTimeout(2800);
         config.setValidationTimeout(2800);
         config.setConnectionTestQuery("VALUES 1");
@@ -136,8 +136,8 @@ public class TestConnectionTimeoutRetry {
     @Test
     public void testConnectionRetries5() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(2);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(2);
         config.setConnectionTimeout(1000);
         config.setValidationTimeout(1000);
         config.setConnectionTestQuery("VALUES 1");
@@ -183,8 +183,8 @@ public class TestConnectionTimeoutRetry {
         StubConnection.slowCreate = false;
 
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(5);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(5);
+        config.setMaxPoolSize(10);
         config.setConnectionTimeout(2000);
         config.setValidationTimeout(2000);
         config.setConnectionTestQuery("VALUES 2");

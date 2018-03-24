@@ -29,8 +29,8 @@ public class ConnectionRaceConditionTest {
     @Test
     public void testRaceCondition() throws Exception {
         LightConfig config = newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(10);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(10);
         config.setInitializationFailTimeout(Long.MAX_VALUE);
         config.setConnectionTimeout(5000);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");

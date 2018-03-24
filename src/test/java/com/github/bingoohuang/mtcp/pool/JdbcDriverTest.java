@@ -25,8 +25,8 @@ public class JdbcDriverTest {
     @Test
     public void driverTest1() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
         config.setJdbcUrl("jdbc:stub");
@@ -49,8 +49,8 @@ public class JdbcDriverTest {
     public void driverTest2() {
         LightConfig config = TestElf.newLightConfig();
 
-        config.setMinimumIdle(1);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(1);
+        config.setMaxPoolSize(1);
         config.setConnectionTestQuery("VALUES 1");
         config.setDriverClassName("com.github.bingoohuang.mtcp.mocks.StubDriver");
         config.setJdbcUrl("jdbc:invalid");

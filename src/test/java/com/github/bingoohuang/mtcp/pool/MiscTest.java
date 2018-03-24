@@ -24,8 +24,8 @@ public class MiscTest {
     @Test
     public void testLogWriter() throws SQLException {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(4);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(4);
         config.setDataSourceClassName("com.github.bingoohuang.mtcp.mocks.StubDataSource");
         TestElf.setConfigUnitTest(true);
 
@@ -67,8 +67,8 @@ public class MiscTest {
             TestElf.setConfigUnitTest(true);
 
             LightConfig config = TestElf.newLightConfig();
-            config.setMinimumIdle(0);
-            config.setMaximumPoolSize(4);
+            config.setMinIdle(0);
+            config.setMaxPoolSize(4);
             config.setThreadFactory(Executors.defaultThreadFactory());
             config.setMetricRegistry(null);
             config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(1));

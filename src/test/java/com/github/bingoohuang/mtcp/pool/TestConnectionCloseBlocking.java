@@ -31,8 +31,8 @@ public class TestConnectionCloseBlocking {
     // @Test
     public void testConnectionCloseBlocking() {
         LightConfig config = TestElf.newLightConfig();
-        config.setMinimumIdle(0);
-        config.setMaximumPoolSize(1);
+        config.setMinIdle(0);
+        config.setMaxPoolSize(1);
         config.setConnectionTimeout(1500);
         config.setDataSource(new CustomMockDataSource());
 
