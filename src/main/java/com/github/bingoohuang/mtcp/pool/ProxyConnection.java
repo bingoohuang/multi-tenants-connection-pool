@@ -460,6 +460,8 @@ public abstract class ProxyConnection implements Connection {
                     return Void.TYPE;
                 } else if ("isValid".equals(methodName)) {
                     return Boolean.FALSE;
+                } else if ("isClosed".equals(methodName)) {
+                    return Boolean.TRUE;
                 } else if ("toString".equals(methodName)) {
                     return ClosedConnection.class.getCanonicalName();
                 }
