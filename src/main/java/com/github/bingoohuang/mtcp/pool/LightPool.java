@@ -150,13 +150,12 @@ public final class LightPool extends PoolBase implements LightPoolMXBean, Concur
         val tenantEnvAware = config.getTenantEnvironmentAware();
         if (tenantEnvAware == null) return;
 
-        val tid = tenantEnvAware.getTenantId();
-        val prevTid = entry.getTenantId();
-        val tidSame = UtilityElf.objectEquals(tid, prevTid);
-        if (!tidSame) entry.setTenantId(tid);
-        if (tidSame) return;
+        tenantEnvAware.tagActiveConnection(entry.getConnectionSeq());
 
-        tenantEnvAware.tagActive(tid + "-" + entry.getConnectionSeq());
+        val tid = tenantEnvAware.getTenantId();
+        if (UtilityElf.objectEquals(tid, entry.getTenantId())) return;
+
+        entry.setTenantId(tid);
         tenantEnvAware.switchTenantDatabase(entry.connection);
     }
 

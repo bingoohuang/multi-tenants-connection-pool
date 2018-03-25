@@ -11,6 +11,15 @@ public class MyTenantEnvironment implements TenantEnvironmentAware {
         return MyTenantContext.getTenantId();
     }
 
+    @Override public void tagActiveConnection(int connectionSeq) {
+//    Jedis jedis = new Jedis();
+//    ExecutorService executor = Executors.newSingleThreadExecutor();
+
+//        executor.submit(() -> {
+//            jedis.zadd("mtcp", System.currentTimeMillis(), connectionSeq);
+//        });
+    }
+
     @SneakyThrows
     @Override public void switchTenantDatabase(Connection connection) {
         val tenantId = MyTenantContext.getTenantId();
@@ -22,12 +31,5 @@ public class MyTenantEnvironment implements TenantEnvironmentAware {
         }
     }
 
-//    Jedis jedis = new Jedis();
-//    ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    @Override public void tagActive(final String connectionName) {
-//        executor.submit(() -> {
-//            jedis.zadd("mtcp", System.currentTimeMillis(), connectionName);
-//        });
-    }
 }
