@@ -64,24 +64,23 @@ public class LightConfig implements LightConfigMXBean {
     @Getter private String connectionTestQuery;
     @Getter private String dataSourceClassName;
     private String dataSourceJndiName;
-    private String driverClassName;
-    private String jdbcUrl;
+    @Getter private String driverClassName;
+    @Getter private String jdbcUrl;
     @Getter private String poolName;
     @Getter private String schema;
     private String transactionIsolationName;
-    private boolean isAutoCommit;
+    @Getter private boolean isAutoCommit;
     @Getter private boolean isReadOnly;
     private boolean isIsolateInternalQueries;
-    private boolean isRegisterMbeans;
-    private boolean isAllowPoolSuspension;
+    @Getter private boolean isRegisterMbeans;
     @Getter private DataSource dataSource;
-    private Properties dataSourceProperties;
-    private ThreadFactory threadFactory;
+    @Getter private Properties dataSourceProperties;
+    @Getter private ThreadFactory threadFactory;
     @Getter private ScheduledExecutorService scheduledExecutor;
     private MetricsTrackerFactory metricsTrackerFactory;
-    private Object metricRegistry;
-    private Object healthCheckRegistry;
-    private Properties healthCheckProperties;
+    @Getter private Object metricRegistry;
+    @Getter private Object healthCheckRegistry;
+    @Getter private Properties healthCheckProperties;
 
     private volatile boolean sealed;
 
@@ -300,19 +299,11 @@ public class LightConfig implements LightConfigMXBean {
         this.dataSourceJndiName = jndiDataSource;
     }
 
-    public Properties getDataSourceProperties() {
-        return dataSourceProperties;
-    }
-
     public void setDataSourceProperties(Properties dsProperties) {
         if (sealed)
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         dataSourceProperties.putAll(dsProperties);
-    }
-
-    public String getDriverClassName() {
-        return driverClassName;
     }
 
     public void setDriverClassName(String driverClassName) {
@@ -332,24 +323,11 @@ public class LightConfig implements LightConfigMXBean {
         }
     }
 
-    public String getJdbcUrl() {
-        return jdbcUrl;
-    }
-
     public void setJdbcUrl(String jdbcUrl) {
         if (sealed)
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.jdbcUrl = jdbcUrl;
-    }
-
-    /**
-     * Get the default auto-commit behavior of connections in the pool.
-     *
-     * @return the default auto-commit behavior of connections
-     */
-    public boolean isAutoCommit() {
-        return isAutoCommit;
     }
 
     /**
@@ -364,28 +342,6 @@ public class LightConfig implements LightConfigMXBean {
         this.isAutoCommit = isAutoCommit;
     }
 
-    /**
-     * Get the pool suspension behavior (allowed or disallowed).
-     *
-     * @return the pool suspension behavior
-     */
-    public boolean isAllowPoolSuspension() {
-        return isAllowPoolSuspension;
-    }
-
-    /**
-     * Set whether or not pool suspension is allowed.  There is a performance
-     * impact when pool suspension is enabled.  Unless you need it (for a
-     * redundancy system for example) do not enable it.
-     *
-     * @param isAllowPoolSuspension the desired pool suspension allowance
-     */
-    public void setAllowPoolSuspension(boolean isAllowPoolSuspension) {
-        if (sealed)
-            throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
-
-        this.isAllowPoolSuspension = isAllowPoolSuspension;
-    }
 
     /**
      * Set the pool initialization failure timeout.  This setting applies to pool
@@ -505,15 +461,6 @@ public class LightConfig implements LightConfigMXBean {
     }
 
     /**
-     * Get the MetricRegistry instance to used for registration of metrics used by LightCP.  Default is {@code null}.
-     *
-     * @return the MetricRegistry instance that will be used
-     */
-    public Object getMetricRegistry() {
-        return metricRegistry;
-    }
-
-    /**
      * Set a MetricRegistry instance to use for registration of metrics used by LightCP.
      *
      * @param metricRegistry the MetricRegistry instance to use
@@ -536,16 +483,6 @@ public class LightConfig implements LightConfigMXBean {
     }
 
     /**
-     * Get the HealthCheckRegistry that will be used for registration of health checks by LightCP.  Currently only
-     * Codahale/DropWizard is supported for health checks.
-     *
-     * @return the HealthCheckRegistry instance that will be used
-     */
-    public Object getHealthCheckRegistry() {
-        return healthCheckRegistry;
-    }
-
-    /**
      * Set the HealthCheckRegistry that will be used for registration of health checks by LightCP.  Currently only
      * Codahale/DropWizard is supported for health checks.  Default is {@code null}.
      *
@@ -564,10 +501,6 @@ public class LightConfig implements LightConfigMXBean {
         }
 
         this.healthCheckRegistry = healthCheckRegistry;
-    }
-
-    public Properties getHealthCheckProperties() {
-        return healthCheckProperties;
     }
 
     public void setHealthCheckProperties(Properties healthCheckProperties) {
@@ -594,17 +527,6 @@ public class LightConfig implements LightConfigMXBean {
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.isReadOnly = readOnly;
-    }
-
-    /**
-     * Determine whether LightCP will self-register {@link LightConfigMXBean} and {@link LightPoolMXBean} instances
-     * in JMX.
-     *
-     * @return {@code true} if LightCP will register MXBeans, {@code false} if it will not
-     */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isRegisterMbeans() {
-        return isRegisterMbeans;
     }
 
     /**
@@ -694,15 +616,6 @@ public class LightConfig implements LightConfigMXBean {
             throw new IllegalStateException("The configuration of the pool is sealed once started.  Use LightConfigMXBean for runtime changes.");
 
         this.transactionIsolationName = isolationLevel;
-    }
-
-    /**
-     * Get the thread factory used to create threads.
-     *
-     * @return the thread factory (may be null, in which case the default thread factory is used)
-     */
-    public ThreadFactory getThreadFactory() {
-        return threadFactory;
     }
 
     /**
